@@ -1,0 +1,48 @@
+==================================================
+BODY IN MOTION — ML MODEL EVALUATION REPORT
+Generated: 2026-10-21 12:33:35.987756
+==================================================
+
+MODEL SPECIFICATION:
+  Algorithm: Random Forest Regression (ranger R package)
+  Objective: Next-Window Mean Heart Rate Prediction
+  Window Size: 30 seconds
+  Target: Future window [t, t+30s] mean heart rate (BPM)
+  Features: Lagged HR (mean, last, sd, min, max), EDA (mean, sd, slope),
+            Skin Temp (mean, sd), Movement (mean, max, sd), Activity condition,
+            and elapsed duration.
+  Leakage Prevention: All features strictly computed from prior window [t-30s, t].
+  Validation Strategy: Disjoint Participant-Level Holdout Split (zero subject leakage)
+
+TRAINING SET:   3133 windows from participants: f02, f03, f04, S01, S02, S04, S08, S09, S10
+HELD-OUT TEST SET: 1327 windows from participants: f01, f05, S05
+
+HELD-OUT TEST METRICS:
+  Random Forest MAE:  2.69 BPM
+  Random Forest RMSE: 4.1 BPM
+  Random Forest R²:   0.9773
+  Random Forest MAPE: 2.9 %
+
+BASELINE COMPARISONS (on identical held-out test participants):
+  Persistence Baseline (last observed HR) MAE:  2.49 BPM
+  Persistence Baseline RMSE:                   3.98 BPM
+  Window Mean Baseline MAE:                    4.38 BPM
+  Window Mean Baseline RMSE:                   6.98 BPM
+
+FEATURE IMPORTANCE (Impurity-based):
+   1. prev_hr_last         : 530352.67
+   2. prev_hr_max          : 403742.23
+   3. prev_hr_mean         : 333644.27
+   4. prev_hr_min          : 230037.33
+   5. activity_condition   : 58979.63
+   6. prev_mv_max          : 37295.64
+   7. prev_eda_mean        : 25920.56
+   8. prev_mv_mean         : 22674.20
+   9. prev_hr_sd           : 15638.49
+  10. prev_eda_sd          : 13407.15
+
+PERFORMANCE BY ACTIVITY CONDITION:
+  Aerobic Exercise     (n=356) | MAE:  3.38 BPM | RMSE:  4.98 BPM
+  Anaerobic Exercise   (n=364) | MAE:  3.64 BPM | RMSE:  5.08 BPM
+  Rest                 (n= 88) | MAE:  2.65 BPM | RMSE:  4.46 BPM
+  Stress Session       (n=519) | MAE:  1.55 BPM | RMSE:  2.12 BPM

@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 650" width="100%" height="100%">
+  <defs>
+    <!-- Cyan Glow Filter -->
+    <filter id="glow-cyan" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    
+    <!-- Red Glow Filter for Heart -->
+    <filter id="glow-red" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <!-- Radial Body Gradient -->
+    <radialGradient id="bodyGrad" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#0E2F52" stop-opacity="0.8" />
+      <stop offset="60%" stop-color="#081A30" stop-opacity="0.6" />
+      <stop offset="100%" stop-color="#05101E" stop-opacity="0.2" />
+    </radialGradient>
+
+    <!-- Heart Gradient -->
+    <radialGradient id="heartGrad" cx="40%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#FF6B8B" />
+      <stop offset="70%" stop-color="#FF2A55" />
+      <stop offset="100%" stop-color="#B30026" />
+    </radialGradient>
+  </defs>
+
+  <!-- Background Telemetry Circle Grid -->
+  <g opacity="0.15">
+    <circle cx="250" cy="280" r="180" fill="none" stroke="#00CFFF" stroke-width="1" stroke-dasharray="4,6" />
+    <circle cx="250" cy="280" r="120" fill="none" stroke="#00CFFF" stroke-width="1" />
+    <circle cx="250" cy="280" r="60" fill="none" stroke="#087BFF" stroke-width="1" stroke-dasharray="2,4" />
+    <line x1="250" y1="40" x2="250" y2="580" stroke="#00CFFF" stroke-width="0.5" stroke-dasharray="2,8" />
+    <line x1="50" y1="280" x2="450" y2="280" stroke="#00CFFF" stroke-width="0.5" stroke-dasharray="2,8" />
+  </g>
+
+  <!-- Thermoregulatory Emerald Outer Energy Field -->
+  <path d="M 250 45 C 220 45 205 65 205 95 C 205 120 220 135 210 150 C 185 160 145 185 130 240 C 115 295 105 370 95 440 C 105 445 118 435 125 390 C 135 330 148 260 165 220 C 170 250 175 320 180 390 C 175 460 170 540 165 620 C 180 625 195 625 205 570 C 215 510 225 430 235 380 C 240 375 260 375 265 380 C 275 430 285 510 295 570 C 305 625 320 625 335 620 C 330 540 325 460 320 390 C 325 320 330 250 335 220 C 352 260 365 330 375 390 C 382 435 395 445 405 440 C 395 370 385 295 370 240 C 355 185 315 160 290 150 C 280 135 295 120 295 95 C 295 65 280 45 250 45 Z" 
+        fill="url(#bodyGrad)" stroke="#00CFFF" stroke-width="1.8" filter="url(#glow-cyan)" opacity="0.85" />
+
+  <!-- Muscular Contours (Orange/Gold highlights) -->
+  <g stroke="#FFAA00" stroke-width="1.4" fill="none" opacity="0.6">
+    <!-- Pectorals / Chest -->
+    <path d="M 215 185 Q 235 210 250 205 Q 265 210 285 185" />
+    <path d="M 215 185 C 220 230 245 235 250 235 C 255 235 280 230 285 185" />
+    <!-- Abdominal Core Lines -->
+    <line x1="250" y1="235" x2="250" y2="350" stroke-dasharray="3,3" />
+    <path d="M 230 260 Q 250 265 270 260" />
+    <path d="M 232 290 Q 250 295 268 290" />
+    <path d="M 235 320 Q 250 325 265 320" />
+    <!-- Shoulder & Arms Deltoids -->
+    <path d="M 195 160 Q 165 180 155 215" />
+    <path d="M 305 160 Q 335 180 345 215" />
+    <!-- Thighs / Quadriceps -->
+    <path d="M 215 400 Q 200 460 195 530" />
+    <path d="M 285 400 Q 300 460 305 530" />
+  </g>
+
+  <!-- Respiratory System (Lungs in Cyan) -->
+  <g fill="rgba(0, 207, 255, 0.2)" stroke="#00CFFF" stroke-width="1.5" opacity="0.75">
+    <!-- Left Lung -->
+    <path d="M 220 185 C 205 190 195 205 195 230 C 195 255 210 265 228 260 C 235 245 235 200 220 185 Z" />
+    <!-- Right Lung -->
+    <path d="M 280 185 C 295 190 305 205 305 230 C 305 255 290 265 272 260 C 265 245 265 200 280 185 Z" />
+    <!-- Trachea / Bronchial Branch -->
+    <path d="M 250 145 L 250 185 M 250 185 L 225 215 M 250 185 L 275 215" fill="none" stroke="#00CFFF" stroke-width="2" />
+  </g>
+
+  <!-- Cardiovascular Vascular Arteries (Red/Pink radiating branches) -->
+  <g stroke="#FF4B6E" stroke-width="1.2" fill="none" opacity="0.8">
+    <!-- Aortic Arch & Carotid branches -->
+    <path d="M 252 200 Q 255 170 245 140" />
+    <path d="M 255 200 Q 262 170 255 140" />
+    <!-- Arm Circulation -->
+    <path d="M 245 210 Q 190 215 155 260 Q 135 310 115 390" />
+    <path d="M 255 210 Q 310 215 345 260 Q 365 310 385 390" />
+    <!-- Abdominal Aorta & Femoral Arteries to legs -->
+    <path d="M 250 225 L 250 365" stroke-width="2" />
+    <path d="M 250 365 Q 230 430 205 520 Q 190 570 185 610" />
+    <path d="M 250 365 Q 270 430 295 520 Q 310 570 315 610" />
+  </g>
+
+  <!-- Central Glowing Heart -->
+  <g filter="url(#glow-red)" transform="translate(252, 212)">
+    <!-- Heart Shape -->
+    <path d="M 0 -10 C -12 -25 -32 -8 -20 12 C -12 24 0 35 0 38 C 0 38 12 24 20 12 C 32 -8 12 -25 0 -10 Z" 
+          fill="url(#heartGrad)" stroke="#FFFFFF" stroke-width="1.5" />
+    <!-- Cardiac Pulse Spark Center -->
+    <circle cx="0" cy="8" r="4" fill="#FFFFFF" opacity="0.9" />
+  </g>
+
+  <!-- Animated Sensor Markers -->
+  <g fill="#00CFFF">
+    <!-- Empatica E4 Wristband on Left Wrist -->
+    <circle cx="115" cy="385" r="5" stroke="#FFFFFF" stroke-width="1.5" />
+    <circle cx="115" cy="385" r="10" fill="none" stroke="#00CFFF" stroke-width="1" stroke-dasharray="2,3" />
+    <!-- Chest ECG / HR Sensor -->
+    <circle cx="250" cy="205" r="3" fill="#FF4B6E" />
+    <!-- Core Temp Sensor -->
+    <circle cx="250" cy="100" r="3" fill="#10E894" />
+  </g>
+</svg>

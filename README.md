@@ -174,4 +174,5 @@ To re-process raw PhysioNet records from scratch and re-train the Random Forest 
 ## ⚖️ Scientific & Clinical Specifications
 This software application is an advanced physiological intelligence and telemetry analytics platform. The predictive models and physiological simulations herein are based on observational data from healthy adult volunteers wearing the clinical-grade Empatica E4 wristband and provide empirical health intelligence for research, performance, and monitoring applications.
 #   b o d y - i n - m o t i o n  
+ #   b o d y - i n - m o t i o n  
  

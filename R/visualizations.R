@@ -63,16 +63,70 @@ apply_dark_theme <- function(p, title = "", x_title = "", y_title = "", show_leg
     config(displayModeBar = FALSE, responsive = TRUE)
 }
 
+#' Build Continuous Timeline across Selected Sessions/Conditions
+#' Prevents duplicate timestamps and unnatural zigzags when multiple sessions are selected
+build_continuous_timeline <- function(df) {
+  if (is.null(df) || nrow(df) == 0) return(df)
+  
+  session_order <- c("AEROBIC", "ANAEROBIC", "STRESS")
+  df$session_factor <- factor(df$activity_category, levels = session_order)
+  df <- df %>% arrange(session_factor, elapsed_sec)
+  
+  sessions_present <- levels(df$session_factor)[levels(df$session_factor) %in% unique(df$activity_category)]
+  
+  df$timeline_sec <- 0
+  current_offset <- 0
+  
+  for (sess in sessions_present) {
+    idx <- which(df$activity_category == sess)
+    if (length(idx) > 0) {
+      sess_elapsed <- df$elapsed_sec[idx]
+      min_e <- min(sess_elapsed)
+      df$timeline_sec[idx] <- current_offset + (sess_elapsed - min_e)
+      current_offset <- max(df$timeline_sec[idx]) + 1
+    }
+  }
+  df
+}
+
+#' Normalized secondary signals (0 - 1 scale for clean multi-signal comparison)
+#' Preserves missing values (NA) as NA without fabricating artificial measurements
+norm_scale <- function(x) {
+  x_clean <- x[!is.na(x) & is.finite(x)]
+  if (length(x_clean) == 0) return(rep(NA_real_, length(x)))
+  rng <- range(x_clean)
+  if (!is.finite(rng[1]) || !is.finite(rng[2]) || rng[2] <= rng[1]) {
+    val <- x_clean[1]
+    norm_val <- if (val >= 0 && val <= 1.5) val / 1.5 else 0.5
+    res <- rep(norm_val, length(x))
+    res[is.na(x)] <- NA_real_
+    return(res)
+  }
+  res <- (x - rng[1]) / (rng[2] - rng[1])
+  res[is.na(x)] <- NA_real_
+  res
+}
+
 #' Plot Multi-Signal Time Series with Dual Y-Axis
-plot_multi_signal_timeseries <- function(df, signals = c("heart_rate", "skin_temp", "eda", "movement_g", "bvp")) {
+plot_multi_signal_timeseries <- function(df, signals = c("heart_rate", "skin_temp", "eda", "movement_g", "bvp"), time_range = NULL) {
   if (is.null(df) || nrow(df) == 0) {
-    return(plot_ly() %>% layout(paper_bgcolor = "rgba(0,0,0,0)", plot_bgcolor = "rgba(0,0,0,0)",
-                                annotations = list(list(text = "No data available for current selection",
-                                                        showarrow = FALSE, font = list(color = TEXT_MUTED, size = 14)))))
+    return(plot_ly(type = "scatter", mode = "markers") %>% layout(
+      paper_bgcolor = "rgba(0,0,0,0)", plot_bgcolor = "rgba(0,0,0,0)",
+      xaxis = list(visible = FALSE), yaxis = list(visible = FALSE),
+      annotations = list(list(
+        text = "No data available for current selection",
+        showarrow = FALSE, font = list(color = TEXT_MUTED, size = 14)
+      ))
+    ))
   }
   
-  df <- df %>% arrange(elapsed_sec)
-  time_min <- df$elapsed_sec / 60
+  # Determine time column: prefer continuous timeline_sec if available, else elapsed_sec
+  t_sec <- if ("timeline_sec" %in% colnames(df)) df$timeline_sec else df$elapsed_sec
+  df$plot_time_min <- t_sec / 60
+  
+  # Ensure strictly distinct, monotonically increasing time points to guarantee line rendering
+  df <- df %>% distinct(plot_time_min, .keep_all = TRUE) %>% arrange(plot_time_min)
+  time_min <- df$plot_time_min
   
   p <- plot_ly()
   
@@ -84,17 +138,6 @@ plot_multi_signal_timeseries <- function(df, signals = c("heart_rate", "skin_tem
       line = list(color = COLOR_HR, width = 2),
       yaxis = "y"
     )
-  }
-  
-  # Normalized secondary signals (0 - 1 scale for clean multi-signal comparison)
-  norm_scale <- function(x) {
-    x_clean <- x[!is.na(x) & is.finite(x)]
-    if (length(x_clean) == 0) return(rep(0.5, length(x)))
-    rng <- range(x_clean)
-    if (!is.finite(rng[1]) || !is.finite(rng[2]) || rng[2] <= rng[1]) return(rep(0.5, length(x)))
-    res <- (x - rng[1]) / (rng[2] - rng[1])
-    res[is.na(res) | !is.finite(res)] <- 0.5
-    res
   }
   
   if ("skin_temp" %in% signals && any(!is.na(df$skin_temp))) {
@@ -115,11 +158,12 @@ plot_multi_signal_timeseries <- function(df, signals = c("heart_rate", "skin_tem
     )
   }
   
+  # Movement signal renders strictly as a line, no area fill
   if ("movement_g" %in% signals && any(!is.na(df$movement_g))) {
     p <- p %>% add_lines(
       x = time_min, y = norm_scale(df$movement_g),
       name = "Movement (Norm)",
-      line = list(color = COLOR_ACC, width = 1.5),
+      line = list(color = COLOR_ACC, width = 1.6),
       yaxis = "y2"
     )
   }
@@ -133,17 +177,22 @@ plot_multi_signal_timeseries <- function(df, signals = c("heart_rate", "skin_tem
     )
   }
   
+  xaxis_cfg <- list(
+    title = "Time (minutes)",
+    gridcolor = "rgba(22, 52, 86, 0.4)",
+    linecolor = BORDER_COLOR,
+    color = TEXT_MUTED
+  )
+  if (!is.null(time_range) && length(time_range) == 2 && time_range[2] > time_range[1]) {
+    xaxis_cfg$range <- time_range
+  }
+  
   p <- p %>%
     layout(
       paper_bgcolor = "rgba(0,0,0,0)",
       plot_bgcolor  = "rgba(0,0,0,0)",
       font = list(color = TEXT_MUTED, family = "Inter, sans-serif", size = 11),
-      xaxis = list(
-        title = "Time (minutes)",
-        gridcolor = "rgba(22, 52, 86, 0.4)",
-        linecolor = BORDER_COLOR,
-        color = TEXT_MUTED
-      ),
+      xaxis = xaxis_cfg,
       yaxis = list(
         title = "Heart Rate (BPM)",
         titlefont = list(color = COLOR_HR),
@@ -153,7 +202,7 @@ plot_multi_signal_timeseries <- function(df, signals = c("heart_rate", "skin_tem
         side = "left"
       ),
       yaxis2 = list(
-        title = "Other Signals (Normalized)",
+        title = "Other Signals (Normalized 0-1)",
         titlefont = list(color = CYAN_ACCENT),
         tickfont = list(color = CYAN_ACCENT),
         overlaying = "y",
@@ -178,18 +227,26 @@ plot_multi_signal_timeseries <- function(df, signals = c("heart_rate", "skin_tem
 
 #' Plot Heart Rate Distribution Curves across Activity Conditions
 plot_hr_distribution_density <- function(df) {
-  if (is.null(df) || nrow(df) == 0 || !("activity_condition" %in% colnames(df))) {
-    return(plot_ly() %>% layout(paper_bgcolor = "rgba(0,0,0,0)", plot_bgcolor = "rgba(0,0,0,0)"))
+  if (is.null(df) || nrow(df) == 0 || !("activity_condition" %in% colnames(df)) || all(is.na(df$heart_rate))) {
+    return(plot_ly(type = "scatter", mode = "markers") %>% layout(
+      paper_bgcolor = "rgba(0,0,0,0)", plot_bgcolor = "rgba(0,0,0,0)",
+      xaxis = list(visible = FALSE), yaxis = list(visible = FALSE),
+      annotations = list(list(
+        text = "No heart rate distribution available for current selection",
+        showarrow = FALSE, font = list(color = TEXT_MUTED, size = 13)
+      ))
+    ))
   }
   
   activities <- c("Rest", "Aerobic Exercise", "Anaerobic Exercise", "Stress Session")
   colors <- c("Rest" = "#3B82F6", "Aerobic Exercise" = "#10E894", "Anaerobic Exercise" = "#FF4B6E", "Stress Session" = "#FFAA00")
   
   p <- plot_ly()
+  traces_added <- 0
   
   for (act in activities) {
     sub_df <- df %>% filter(activity_condition == act, !is.na(heart_rate), is.finite(heart_rate), heart_rate > 35, heart_rate < 220)
-    if (nrow(sub_df) > 5 && sd(sub_df$heart_rate, na.rm = TRUE) > 0.1) {
+    if (nrow(sub_df) >= 5 && sd(sub_df$heart_rate, na.rm = TRUE) > 0.1) {
       dens <- density(sub_df$heart_rate, n = 100)
       p <- p %>% add_trace(
         x = dens$x, y = dens$y,
@@ -200,30 +257,66 @@ plot_hr_distribution_density <- function(df) {
         fillcolor = paste0(colors[act], "33"),
         line = list(color = colors[act], width = 2)
       )
+      traces_added <- traces_added + 1
     }
+  }
+  
+  if (traces_added == 0) {
+    return(plot_ly(type = "scatter", mode = "markers") %>% layout(
+      paper_bgcolor = "rgba(0,0,0,0)", plot_bgcolor = "rgba(0,0,0,0)",
+      xaxis = list(visible = FALSE), yaxis = list(visible = FALSE),
+      annotations = list(list(
+        text = "Insufficient heart rate variation to generate density curve",
+        showarrow = FALSE, font = list(color = TEXT_MUTED, size = 13)
+      ))
+    ))
   }
   
   apply_dark_theme(p, title = "", x_title = "Heart Rate (BPM)", y_title = "Density", show_legend = TRUE)
 }
 
-#' Plot Correlation Heatmap
-plot_correlation_heatmap <- function(df) {
+#' Plot Correlation Heatmap with Meaningful Variable Names
+plot_correlation_heatmap <- function(df, signals = c("heart_rate", "skin_temp", "eda", "movement_g", "bvp")) {
   num_cols <- c("heart_rate", "skin_temp", "eda", "movement_g", "bvp")
-  existing_cols <- intersect(num_cols, colnames(df))
+  existing_cols <- intersect(signals, intersect(num_cols, colnames(df)))
   
-  if (length(existing_cols) < 2) {
-    return(plot_ly() %>% layout(paper_bgcolor = "rgba(0,0,0,0)", plot_bgcolor = "rgba(0,0,0,0)"))
+  if (is.null(df) || nrow(df) < 5 || length(existing_cols) < 2) {
+    return(plot_ly(type = "scatter", mode = "markers") %>% layout(
+      paper_bgcolor = "rgba(0,0,0,0)", plot_bgcolor = "rgba(0,0,0,0)",
+      xaxis = list(visible = FALSE), yaxis = list(visible = FALSE),
+      annotations = list(list(
+        text = "Select at least 2 signals with valid data to view correlation",
+        showarrow = FALSE, font = list(color = TEXT_MUTED, size = 13)
+      ))
+    ))
   }
   
-  sub_df <- df[, existing_cols] %>% na.omit()
-  if (nrow(sub_df) < 10) {
-    return(plot_ly() %>% layout(paper_bgcolor = "rgba(0,0,0,0)", plot_bgcolor = "rgba(0,0,0,0)"))
-  }
-  
+  sub_df <- df[, existing_cols, drop = FALSE]
   cor_mat <- suppressWarnings(cor(sub_df, use = "pairwise.complete.obs"))
+  
+  if (all(is.na(cor_mat))) {
+    return(plot_ly() %>% layout(
+      paper_bgcolor = "rgba(0,0,0,0)", plot_bgcolor = "rgba(0,0,0,0)",
+      xaxis = list(visible = FALSE), yaxis = list(visible = FALSE),
+      annotations = list(list(
+        text = "Insufficient variable variance for correlation in current selection",
+        showarrow = FALSE, font = list(color = TEXT_MUTED, size = 13)
+      ))
+    ))
+  }
+  
   cor_mat[!is.finite(cor_mat)] <- 0
   diag(cor_mat) <- 1.0
-  labels <- c("HR", "Skin Temp", "EDA", "Move", "BVP")[match(existing_cols, num_cols)]
+  
+  name_map <- c(
+    "heart_rate" = "Heart Rate (BPM)",
+    "skin_temp"  = "Skin Temp (°C)",
+    "eda"        = "EDA (µS)",
+    "movement_g" = "Movement (g)",
+    "bvp"        = "BVP"
+  )
+  labels <- unname(name_map[existing_cols])
+  labels[is.na(labels)] <- existing_cols[is.na(labels)]
   
   # Scientific Diverging Colorscale (Navy -> White -> Red/Cyan)
   colorscale <- list(
@@ -244,9 +337,9 @@ plot_correlation_heatmap <- function(df) {
       paper_bgcolor = "rgba(0,0,0,0)",
       plot_bgcolor = "rgba(0,0,0,0)",
       font = list(color = TEXT_MUTED, family = "Inter, sans-serif"),
-      xaxis = list(color = TEXT_WHITE, tickfont = list(color = TEXT_WHITE)),
-      yaxis = list(color = TEXT_WHITE, tickfont = list(color = TEXT_WHITE)),
-      margin = list(l = 50, r = 30, t = 30, b = 30)
+      xaxis = list(color = TEXT_WHITE, tickfont = list(color = TEXT_WHITE, size = 10)),
+      yaxis = list(color = TEXT_WHITE, tickfont = list(color = TEXT_WHITE, size = 10)),
+      margin = list(l = 85, r = 30, t = 30, b = 60)
     ) %>%
     config(displayModeBar = FALSE, responsive = TRUE)
 }

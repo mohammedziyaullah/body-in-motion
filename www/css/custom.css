@@ -119,22 +119,78 @@ body {
 .bim-selector-wrap {
   display: flex;
   align-items: center;
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 2px 10px;
-  font-size: 0.82rem;
-  color: var(--text-muted);
+  gap: 8px;
+  height: 34px;
 }
 
-.bim-selector-wrap select {
-  background: transparent;
-  border: none;
-  color: var(--cyan);
+.bim-selector-label {
+  font-size: 0.82rem;
   font-weight: 600;
-  padding: 4px 6px;
-  outline: none;
+  color: var(--text-dim);
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.bim-selector-wrap .shiny-input-container {
+  margin-bottom: 0 !important;
+  height: 34px !important;
+}
+
+.bim-selector-wrap .selectize-control {
+  margin-bottom: 0 !important;
+  height: 34px !important;
+}
+
+.bim-selector-wrap .selectize-input {
+  min-height: 34px !important;
+  height: 34px !important;
+  padding: 5px 12px !important;
+  background: #081728 !important;
+  border: 1px solid #163456 !important;
+  border-radius: 8px !important;
+  color: #00CFFF !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+  line-height: 22px !important;
+  box-shadow: none !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.bim-selector-wrap .selectize-input.focus {
+  border-color: #00CFFF !important;
+  box-shadow: 0 0 0 2px rgba(0, 207, 255, 0.25) !important;
+}
+
+.bim-selector-wrap .selectize-input:after {
+  border-color: #00CFFF transparent transparent transparent !important;
+  right: 12px !important;
+  margin-top: -2px !important;
+}
+
+.bim-selector-wrap .selectize-input.dropdown-active:after {
+  border-color: transparent transparent #00CFFF transparent !important;
+}
+
+.bim-theme-toggle-btn {
+  border: 1px solid #163456;
+  background: #081728;
+  color: #00CFFF;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.bim-theme-toggle-btn:hover {
+  background: rgba(0, 207, 255, 0.12);
+  border-color: #00CFFF;
+  color: #00CFFF;
 }
 
 /* CARDS & CONTAINERS */
@@ -427,36 +483,155 @@ body {
 }
 
 .bim-feature-graphic {
-  height: 60px;
-  background: rgba(6, 19, 33, 0.7);
-  border-radius: 8px;
-  border: 1px dashed var(--border-color);
+  height: 64px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  margin-top: 6px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* Feature Card Graphic Themes (Dark Mode) */
+.graphic-data {
+  background: linear-gradient(135deg, rgba(8, 123, 255, 0.2), rgba(0, 207, 255, 0.25));
+  border: 1px solid rgba(0, 207, 255, 0.4);
+  box-shadow: inset 0 0 15px rgba(0, 207, 255, 0.15);
+}
+
+.graphic-sim {
+  background: linear-gradient(135deg, rgba(16, 232, 148, 0.18), rgba(8, 123, 255, 0.22));
+  border: 1px solid rgba(16, 232, 148, 0.4);
+  box-shadow: inset 0 0 15px rgba(16, 232, 148, 0.15);
+}
+
+.graphic-analytics {
+  background: linear-gradient(135deg, rgba(255, 170, 0, 0.18), rgba(255, 75, 110, 0.22));
+  border: 1px solid rgba(255, 170, 0, 0.4);
+  box-shadow: inset 0 0 15px rgba(255, 170, 0, 0.15);
+}
+
+.graphic-intel {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(0, 207, 255, 0.22));
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  box-shadow: inset 0 0 15px rgba(168, 85, 247, 0.15);
 }
 
 /* ANATOMICAL VISUALIZATION CONTAINER */
 .bim-anatomical-wrap {
   position: relative;
   width: 100%;
-  height: 520px;
+  height: 540px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+.bim-anatomical-img {
+  width: 82%;
+  max-width: 440px;
+  height: 530px;
+  object-fit: contain;
+  transition: transform 0.4s ease, filter 0.4s ease;
+  z-index: 1;
+}
+
+/* Dark Theme Body: Glowing blue with navy backdrop */
+.bim-body-dark {
+  display: block;
+  filter: drop-shadow(0 0 35px rgba(0, 207, 255, 0.4)) drop-shadow(0 0 20px rgba(255, 75, 110, 0.3));
+}
+
+/* Light / Day Theme Body: Crisp blue body on white backdrop (Zero Box Shadow) */
+.bim-body-light {
+  display: none;
+  filter: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.bim-anatomical-img:hover {
+  transform: scale(1.025);
+}
+
+/* Glowing Pulsing Beacons on Anatomical Organs */
+.bim-beacon {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  z-index: 3;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.2s ease;
+}
+
+.bim-beacon:hover {
+  transform: scale(1.4);
+}
+
+.bim-beacon::after {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  opacity: 0.8;
+  animation: beacon-pulse 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+}
+
+@keyframes beacon-pulse {
+  0% { transform: scale(0.6); opacity: 1; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+.beacon-heart {
+  top: 38%;
+  left: 50%;
+  background-color: #FF4B6E;
+  color: #FF4B6E;
+  box-shadow: 0 0 16px #FF4B6E, 0 0 32px rgba(255, 75, 110, 0.85);
+}
+
+.beacon-lungs {
+  top: 35%;
+  left: 41%;
+  background-color: #00D2FF;
+  color: #00D2FF;
+  box-shadow: 0 0 14px #00D2FF, 0 0 28px rgba(0, 210, 255, 0.75);
+}
+
+.beacon-muscle {
+  top: 51%;
+  left: 64%;
+  background-color: #FFAA00;
+  color: #FFAA00;
+  box-shadow: 0 0 14px #FFAA00, 0 0 28px rgba(255, 170, 0, 0.75);
+}
+
+.beacon-thermo {
+  top: 68%;
+  left: 67%;
+  background-color: #10E894;
+  color: #10E894;
+  box-shadow: 0 0 14px #10E894, 0 0 28px rgba(16, 232, 148, 0.75);
+}
+
 .bim-callout-card {
   position: absolute;
-  background: rgba(11, 29, 48, 0.88);
+  background: rgba(11, 29, 48, 0.92);
   border: 1px solid var(--border-color);
   border-radius: 10px;
   padding: 12px 16px;
   backdrop-filter: blur(8px);
-  width: 210px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  width: 215px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
   transition: all 0.2s ease;
+  z-index: 4;
 }
 
 .bim-callout-card:hover {
@@ -563,16 +738,25 @@ body {
 
 /* TABS STYLING */
 .nav-pills .nav-link {
-  color: var(--text-muted);
-  background-color: transparent;
-  border-radius: 6px;
-  padding: 6px 14px;
-  font-size: 0.84rem;
-  font-weight: 500;
+  color: #8EAECF !important;
+  background-color: #081728 !important;
+  border: 1px solid #163456 !important;
+  border-radius: 6px !important;
+  padding: 6px 14px !important;
+  font-size: 0.84rem !important;
+  font-weight: 500 !important;
+  margin-right: 6px !important;
+  transition: all 0.15s ease !important;
+}
+.nav-pills .nav-link:hover {
+  color: #00CFFF !important;
+  border-color: #00CFFF !important;
 }
 .nav-pills .nav-link.active {
-  background-color: var(--blue-primary);
-  color: var(--text-white);
+  background-color: #0088FF !important;
+  color: #FFFFFF !important;
+  border-color: #0088FF !important;
+  font-weight: 600 !important;
 }
 
 /* OUTCOME METRIC CARDS (SIMULATION PAGE) */
@@ -603,25 +787,161 @@ body {
   font-size: 1.25rem;
 }
 
-/* DATA TABLE STYLING */
+/* SUMMARY STATISTICS TABLE (SHINY TABLE) - DARK MODE */
+.shiny-table {
+  width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  background-color: #081728 !important;
+  border: 1px solid #163456 !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  color: #E2EDF8 !important;
+  margin-bottom: 1rem !important;
+}
+
+.shiny-table > :not(caption) > * > * {
+  background-color: transparent !important;
+  color: #E2EDF8 !important;
+  border-color: #163456 !important;
+  padding: 10px 14px !important;
+}
+
+.shiny-table thead th {
+  background-color: #0B1E33 !important;
+  color: #00CFFF !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+  letter-spacing: 0.5px !important;
+  border-bottom: 2px solid #00CFFF !important;
+  border-top: none !important;
+}
+
+.shiny-table tbody tr {
+  background-color: #081728 !important;
+  transition: background-color 0.15s ease !important;
+}
+
+.shiny-table tbody tr:nth-of-type(even),
+.shiny-table tbody tr:nth-of-type(even) > * {
+  background-color: #0A1C30 !important;
+  color: #E2EDF8 !important;
+}
+
+.shiny-table tbody tr:nth-of-type(odd),
+.shiny-table tbody tr:nth-of-type(odd) > * {
+  background-color: #081728 !important;
+  color: #E2EDF8 !important;
+}
+
+.shiny-table tbody tr:hover > * {
+  background-color: rgba(0, 207, 255, 0.08) !important;
+  color: #FFFFFF !important;
+}
+
+.shiny-table td:first-child {
+  font-weight: 600 !important;
+  color: #00CFFF !important;
+}
+
+/* DATA TABLE (DT) - DARK MODE */
 .dataTables_wrapper {
-  color: var(--text-muted) !important;
-  font-size: 0.85rem;
+  color: #8EAECF !important;
+  font-size: 0.85rem !important;
 }
+
 table.dataTable {
-  background-color: transparent !important;
-  color: var(--text-white) !important;
-  border-color: var(--border-color) !important;
+  width: 100% !important;
+  background-color: #081728 !important;
+  color: #E2EDF8 !important;
+  border: 1px solid #163456 !important;
+  border-radius: 8px !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  overflow: hidden !important;
 }
-table.dataTable thead th {
-  border-bottom: 1px solid var(--border-color) !important;
-  color: var(--cyan) !important;
+
+table.dataTable thead th,
+table.dataTable thead td {
+  background-color: #0B1E33 !important;
+  color: #00CFFF !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+  border-bottom: 2px solid #00CFFF !important;
+  border-top: none !important;
+  padding: 10px 14px !important;
 }
+
 table.dataTable tbody tr {
-  background-color: transparent !important;
+  background-color: #081728 !important;
 }
-table.dataTable tbody tr:hover {
-  background-color: rgba(255, 255, 255, 0.03) !important;
+
+table.dataTable tbody tr:nth-of-type(even) td,
+table.dataTable.display tbody tr.even > .sorting_1,
+table.dataTable.stripe tbody tr.even > .sorting_1 {
+  background-color: #0A1C30 !important;
+  color: #E2EDF8 !important;
+}
+
+table.dataTable tbody tr:nth-of-type(odd) td,
+table.dataTable.display tbody tr.odd > .sorting_1,
+table.dataTable.stripe tbody tr.odd > .sorting_1 {
+  background-color: #081728 !important;
+  color: #E2EDF8 !important;
+}
+
+table.dataTable tbody td {
+  border-color: #163456 !important;
+  color: #E2EDF8 !important;
+  padding: 8px 14px !important;
+}
+
+table.dataTable tbody tr:hover td {
+  background-color: rgba(0, 207, 255, 0.08) !important;
+  color: #FFFFFF !important;
+}
+
+.dataTables_wrapper .dataTables_info {
+  color: #8EAECF !important;
+  padding-top: 10px !important;
+  font-size: 0.82rem !important;
+}
+
+.dataTables_wrapper .dataTables_paginate {
+  padding-top: 10px !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  background: #081728 !important;
+  color: #8EAECF !important;
+  border: 1px solid #163456 !important;
+  border-radius: 6px !important;
+  padding: 4px 10px !important;
+  margin: 0 2px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+  background: #163456 !important;
+  color: #00CFFF !important;
+  border-color: #00CFFF !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+  background: #00CFFF !important;
+  color: #030A14 !important;
+  border-color: #00CFFF !important;
+  font-weight: 700 !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover {
+  background: rgba(8, 23, 40, 0.5) !important;
+  color: #4A6582 !important;
+  border-color: #163456 !important;
+  cursor: not-allowed !important;
 }
 
 /* FOOTER */
@@ -634,10 +954,199 @@ table.dataTable tbody tr:hover {
   margin-top: 40px;
 }
 
+/* SELECTIZE DROPDOWN STYLING (GLOBAL) */
+.selectize-dropdown {
+  background: #081728 !important;
+  border: 1px solid #163456 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
+  color: #C0D4EC !important;
+  z-index: 1050 !important;
+  padding: 4px !important;
+}
+
+.selectize-dropdown .option {
+  padding: 8px 12px !important;
+  color: #C0D4EC !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+}
+
+.selectize-dropdown .active {
+  background-color: #102A45 !important;
+  color: #00CFFF !important;
+}
+
+/* SHINY RADIO BUTTONS & CHECKBOXES */
+.shiny-options-group {
+  margin-top: 4px;
+}
+
+.shiny-options-group .radio,
+.shiny-options-group .checkbox {
+  margin-bottom: 10px;
+}
+
+.shiny-options-group label {
+  cursor: pointer;
+  font-size: 0.92rem;
+  color: #C0D4EC;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.shiny-options-group label:hover {
+  color: #00CFFF;
+}
+
+.shiny-options-group input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #163456;
+  border-radius: 50%;
+  background-color: #081728;
+  outline: none;
+  margin: 0;
+  display: inline-grid;
+  place-content: center;
+  cursor: pointer;
+  vertical-align: middle;
+  transition: all 0.2s ease;
+}
+
+.shiny-options-group input[type="radio"]:checked {
+  border-color: #00CFFF;
+  background-color: #081728;
+}
+
+.shiny-options-group input[type="radio"]:checked::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #00CFFF;
+  box-shadow: 0 0 6px rgba(0, 207, 255, 0.6);
+}
+
+.shiny-options-group input[type="checkbox"] {
+  accent-color: #00CFFF;
+  width: 17px;
+  height: 17px;
+  cursor: pointer;
+  margin: 0;
+  vertical-align: middle;
+}
+
+/* ABOUT PAGE & LEAD TEXT */
+.bim-text-lead {
+  color: #C0D4EC;
+  line-height: 1.65;
+  font-size: 0.96rem;
+}
+
+.bim-about-feature-title {
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+.bim-about-feature-desc {
+  color: #8EA3BF;
+}
+
+.bim-methodology-card {
+  background: rgba(8, 23, 40, 0.7);
+  border: 1px solid #163456;
+  border-radius: 8px;
+}
+
+.bim-methodology-card .perf-title {
+  color: #00CFFF;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.bim-methodology-card .base-title {
+  color: #FFAA00;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.bim-methodology-card ul li {
+  color: #8EA3BF;
+  margin-bottom: 5px;
+  font-size: 0.88rem;
+}
+
+.bim-references-list {
+  color: #8EA3BF;
+  line-height: 1.8;
+  padding-left: 20px;
+}
+
+.bim-references-list li {
+  margin-bottom: 8px;
+}
+
+/* DATASET & PROFILE INFO TABLES */
+.bim-info-table {
+  width: 100%;
+  margin-bottom: 0;
+  background: transparent !important;
+  border-collapse: collapse;
+}
+
+.bim-info-table td,
+.bim-info-table th {
+  padding: 10px 14px;
+  vertical-align: middle;
+  border-bottom: 1px solid rgba(22, 52, 86, 0.45) !important;
+  color: #C0D4EC;
+  font-size: 0.92rem;
+  background: transparent !important;
+}
+
+.bim-info-table tr:last-child td {
+  border-bottom: none !important;
+}
+
+.bim-info-table td strong {
+  color: #00CFFF;
+  font-weight: 600;
+}
+
+/* PARTICIPANT DEMOGRAPHICS TABLE */
+.bim-profile-table td {
+  padding: 9px 12px;
+  font-size: 0.88rem;
+  border-bottom: 1px solid rgba(22, 52, 86, 0.35) !important;
+}
+
+.bim-demo-lbl {
+  color: #8EA3BF;
+  font-weight: 500;
+}
+
+.bim-demo-val {
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+.bim-demo-id {
+  color: #00CFFF;
+  font-weight: 700;
+}
+
 /* =========================================================================
    LIGHT / DAY THEME DEFINITIONS
    ========================================================================= */
+html.light-mode,
 body.light-mode {
+  color-scheme: light !important;
   --bg-dark: #F1F5F9;
   --bg-card: #FFFFFF;
   --bg-card-hover: #F8FAFC;
@@ -655,9 +1164,9 @@ body.light-mode {
 }
 
 body.light-mode .bim-navbar {
-  background-color: #FFFFFF;
-  border-bottom: 1px solid #E2E8F0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  background-color: #FFFFFF !important;
+  border-bottom: 1px solid #E2E8F0 !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06) !important;
 }
 
 body.light-mode .bim-brand-text {
@@ -667,10 +1176,11 @@ body.light-mode .bim-brand-text {
 body.light-mode .bim-card,
 body.light-mode .bim-feature-card,
 body.light-mode .bim-metric-card,
-body.light-mode .bim-filter-panel {
+body.light-mode .bim-filter-panel,
+body.light-mode .bim-sidebar {
   background-color: #FFFFFF !important;
   border-color: #E2E8F0 !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
 }
 
 body.light-mode .bim-hero-subtitle,
@@ -681,6 +1191,49 @@ body.light-mode .bim-card-title {
 body.light-mode .bim-hero-desc,
 body.light-mode .bim-metric-label,
 body.light-mode .bim-feature-desc {
+  color: #475569 !important;
+}
+
+body.light-mode .bim-stat-box {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.light-mode .bim-stat-val {
+  color: #0F172A !important;
+}
+
+body.light-mode .bim-stat-lbl {
+  color: #475569 !important;
+}
+
+body.light-mode .bim-metric-val {
+  color: #0F172A !important;
+}
+
+body.light-mode .bim-outcome-box {
+  background: #FFFFFF !important;
+  border: 1px solid #E2E8F0 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+  color: #0F172A !important;
+}
+
+body.light-mode .bim-outcome-box div {
+  color: #0F172A !important;
+}
+
+body.light-mode .bim-callout-card {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border: 1px solid #CBD5E1 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+}
+
+body.light-mode .bim-callout-title {
+  color: #0F172A !important;
+}
+
+body.light-mode .bim-callout-desc {
   color: #475569 !important;
 }
 
@@ -735,20 +1288,375 @@ body.light-mode .bim-footer {
   color: #64748B;
 }
 
-body.light-mode .bim-callout {
-  background: rgba(255, 255, 255, 0.95) !important;
-  border-color: #CBD5E1 !important;
-}
-
-body.light-mode .bim-callout-title {
-  color: #0F172A !important;
-}
-
-body.light-mode .bim-callout-desc {
-  color: #475569 !important;
-}
-
 body.light-mode .list-group-item {
   color: #0F172A !important;
   border-color: #E2E8F0 !important;
+}
+
+/* Light / Day Theme Body Model Display (No Dark Box!) */
+body.light-mode .bim-body-dark {
+  display: none !important;
+}
+
+body.light-mode .bim-body-light {
+  display: block !important;
+}
+
+body.light-mode .bim-anatomical-wrap {
+  background: transparent !important;
+}
+
+/* Light / Day Theme Feature Card Mini Graphics - Vibrant & Lively! */
+body.light-mode .graphic-data {
+  background: linear-gradient(135deg, #E0F2FE, #BAE6FD) !important;
+  border: 1px solid #7DD3FC !important;
+  box-shadow: 0 3px 12px rgba(2, 132, 199, 0.14) !important;
+}
+
+body.light-mode .graphic-sim {
+  background: linear-gradient(135deg, #DCFCE7, #BBF7D0) !important;
+  border: 1px solid #86EFAC !important;
+  box-shadow: 0 3px 12px rgba(16, 185, 129, 0.14) !important;
+}
+
+body.light-mode .graphic-analytics {
+  background: linear-gradient(135deg, #FEF3C7, #FDE68A) !important;
+  border: 1px solid #FCD34D !important;
+  box-shadow: 0 3px 12px rgba(245, 158, 11, 0.14) !important;
+}
+
+body.light-mode .graphic-intel {
+  background: linear-gradient(135deg, #F3E8FF, #E9D5FF) !important;
+  border: 1px solid #D8B4FE !important;
+  box-shadow: 0 3px 12px rgba(168, 85, 247, 0.14) !important;
+}
+
+/* Light Mode - Navbar Participant Select & Toggle Button */
+body.light-mode .bim-selector-label {
+  color: #475569 !important;
+}
+
+body.light-mode .bim-selector-wrap .selectize-input {
+  background: #FFFFFF !important;
+  border: 1px solid #CBD5E1 !important;
+  color: #0284C7 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.light-mode .bim-selector-wrap .selectize-input.focus {
+  border-color: #0284C7 !important;
+  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2) !important;
+}
+
+body.light-mode .bim-selector-wrap .selectize-input:after {
+  border-color: #0284C7 transparent transparent transparent !important;
+}
+
+body.light-mode .bim-selector-wrap .selectize-input.dropdown-active:after {
+  border-color: transparent transparent #0284C7 transparent !important;
+}
+
+body.light-mode .bim-theme-toggle-btn {
+  background: #FFFFFF !important;
+  border: 1px solid #CBD5E1 !important;
+  color: #0284C7 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.light-mode .bim-theme-toggle-btn:hover {
+  background: #F1F5F9 !important;
+  border-color: #0284C7 !important;
+  color: #0369A1 !important;
+}
+
+/* Light Mode - Dropdown Menu */
+body.light-mode .selectize-dropdown {
+  background: #FFFFFF !important;
+  border: 1px solid #CBD5E1 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+  color: #0F172A !important;
+}
+
+body.light-mode .selectize-dropdown .option {
+  color: #1E293B !important;
+}
+
+body.light-mode .selectize-dropdown .active {
+  background-color: #E0F2FE !important;
+  color: #0284C7 !important;
+}
+
+/* Light Mode - Radio Buttons & Checkboxes */
+body.light-mode .shiny-options-group label {
+  color: #1E293B !important;
+}
+
+body.light-mode .shiny-options-group label:hover {
+  color: #0284C7 !important;
+}
+
+body.light-mode .shiny-options-group input[type="radio"] {
+  border: 2px solid #94A3B8 !important;
+  background-color: #FFFFFF !important;
+}
+
+body.light-mode .shiny-options-group input[type="radio"]:checked {
+  border-color: #0284C7 !important;
+  background-color: #FFFFFF !important;
+}
+
+body.light-mode .shiny-options-group input[type="radio"]:checked::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #0284C7 !important;
+  box-shadow: none !important;
+}
+
+body.light-mode .shiny-options-group input[type="checkbox"] {
+  accent-color: #0284C7 !important;
+}
+
+/* Light Mode - Navigation Pills / Tabs */
+body.light-mode .nav-pills .nav-link {
+  color: #475569 !important;
+  background-color: #F1F5F9 !important;
+  border: 1px solid #CBD5E1 !important;
+  margin-right: 6px !important;
+}
+
+body.light-mode .nav-pills .nav-link:hover {
+  color: #0284C7 !important;
+  background-color: #E2E8F0 !important;
+  border-color: #0284C7 !important;
+}
+
+body.light-mode .nav-pills .nav-link.active {
+  background-color: #0284C7 !important;
+  color: #FFFFFF !important;
+  border-color: #0284C7 !important;
+  font-weight: 600 !important;
+}
+
+/* Light Mode - Shiny Summary Table (Crystal Clear, High Contrast, Dashboard Theme) */
+body.light-mode .shiny-table {
+  color: #0F172A !important;
+  background-color: #FFFFFF !important;
+  border: 1px solid #CBD5E1 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+}
+
+body.light-mode .shiny-table > :not(caption) > * > * {
+  background-color: transparent !important;
+  color: #1E293B !important;
+  border-color: #E2E8F0 !important;
+  padding: 10px 14px !important;
+}
+
+body.light-mode .shiny-table thead th {
+  background-color: #F1F5F9 !important;
+  color: #0F172A !important;
+  font-weight: 700 !important;
+  border-bottom: 2px solid #0284C7 !important;
+  border-top: none !important;
+}
+
+body.light-mode .shiny-table tbody tr {
+  background-color: #FFFFFF !important;
+}
+
+body.light-mode .shiny-table tbody tr:nth-of-type(odd),
+body.light-mode .shiny-table tbody tr:nth-of-type(odd) > *,
+body.light-mode .shiny-table.table-striped > tbody > tr:nth-of-type(odd) > * {
+  background-color: #FFFFFF !important;
+  color: #1E293B !important;
+}
+
+body.light-mode .shiny-table tbody tr:nth-of-type(even),
+body.light-mode .shiny-table tbody tr:nth-of-type(even) > *,
+body.light-mode .shiny-table.table-striped > tbody > tr:nth-of-type(even) > * {
+  background-color: #F8FAFC !important;
+  color: #1E293B !important;
+}
+
+body.light-mode .shiny-table tbody tr:hover > *,
+body.light-mode .shiny-table.table-hover > tbody > tr:hover > * {
+  background-color: #F1F5F9 !important;
+  color: #0284C7 !important;
+}
+
+body.light-mode .shiny-table td:first-child {
+  font-weight: 600 !important;
+  color: #0284C7 !important;
+}
+
+/* Light Mode - Data Table (DT) Dashboard Styling */
+body.light-mode .dataTables_wrapper {
+  color: #475569 !important;
+}
+
+body.light-mode table.dataTable {
+  background-color: #FFFFFF !important;
+  color: #1E293B !important;
+  border: 1px solid #CBD5E1 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+}
+
+body.light-mode table.dataTable thead th,
+body.light-mode table.dataTable thead td {
+  background-color: #F1F5F9 !important;
+  color: #0F172A !important;
+  font-weight: 700 !important;
+  border-bottom: 2px solid #0284C7 !important;
+  border-top: none !important;
+  padding: 10px 14px !important;
+}
+
+body.light-mode table.dataTable tbody tr {
+  background-color: #FFFFFF !important;
+}
+
+body.light-mode table.dataTable tbody tr:nth-of-type(odd) td,
+body.light-mode table.dataTable.display tbody tr.odd > .sorting_1,
+body.light-mode table.dataTable.stripe tbody tr.odd > .sorting_1,
+body.light-mode table.dataTable.display tbody tr.odd,
+body.light-mode table.dataTable.stripe tbody tr.odd {
+  background-color: #FFFFFF !important;
+  color: #1E293B !important;
+}
+
+body.light-mode table.dataTable tbody tr:nth-of-type(even) td,
+body.light-mode table.dataTable.display tbody tr.even > .sorting_1,
+body.light-mode table.dataTable.stripe tbody tr.even > .sorting_1,
+body.light-mode table.dataTable.display tbody tr.even,
+body.light-mode table.dataTable.stripe tbody tr.even {
+  background-color: #F8FAFC !important;
+  color: #1E293B !important;
+}
+
+body.light-mode table.dataTable tbody td {
+  border-color: #E2E8F0 !important;
+  color: #1E293B !important;
+  padding: 8px 14px !important;
+}
+
+body.light-mode table.dataTable tbody tr:hover td,
+body.light-mode table.dataTable.display tbody tr:hover > .sorting_1 {
+  background-color: #F1F5F9 !important;
+  color: #0284C7 !important;
+}
+
+body.light-mode .dataTables_wrapper .dataTables_info {
+  color: #64748B !important;
+  font-weight: 500 !important;
+  padding-top: 10px !important;
+}
+
+body.light-mode .dataTables_wrapper .dataTables_paginate {
+  padding-top: 10px !important;
+}
+
+body.light-mode .dataTables_wrapper .dataTables_paginate .paginate_button {
+  background: #FFFFFF !important;
+  color: #334155 !important;
+  border: 1px solid #CBD5E1 !important;
+  border-radius: 6px !important;
+  padding: 4px 10px !important;
+  margin: 0 2px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+body.light-mode .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+  background: #F1F5F9 !important;
+  color: #0284C7 !important;
+  border-color: #0284C7 !important;
+}
+
+body.light-mode .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+body.light-mode .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+  background: #0284C7 !important;
+  color: #FFFFFF !important;
+  border-color: #0284C7 !important;
+  font-weight: 700 !important;
+}
+
+body.light-mode .dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
+body.light-mode .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover {
+  background: #F8FAFC !important;
+  color: #94A3B8 !important;
+  border-color: #E2E8F0 !important;
+  cursor: not-allowed !important;
+}
+
+/* Light Mode - About Page & General Text Readability */
+body.light-mode .bim-text-lead {
+  color: #334155 !important;
+}
+
+body.light-mode .bim-about-feature-title {
+  color: #0F172A !important;
+}
+
+body.light-mode .bim-about-feature-desc {
+  color: #475569 !important;
+}
+
+body.light-mode .bim-methodology-card {
+  background: #F8FAFC !important;
+  border: 1px solid #CBD5E1 !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04) !important;
+}
+
+body.light-mode .bim-methodology-card .perf-title {
+  color: #0284C7 !important;
+}
+
+body.light-mode .bim-methodology-card .base-title {
+  color: #D97706 !important;
+}
+
+body.light-mode .bim-methodology-card ul li {
+  color: #1E293B !important;
+  font-weight: 500;
+}
+
+body.light-mode .bim-references-list {
+  color: #334155 !important;
+}
+
+/* Light Mode - Tables (Crystal Clear, High Contrast) */
+body.light-mode .bim-info-table td,
+body.light-mode .bim-info-table th {
+  border-bottom: 1px solid #E2E8F0 !important;
+  color: #334155 !important;
+  background: transparent !important;
+}
+
+body.light-mode .bim-info-table td strong {
+  color: #0284C7 !important;
+}
+
+body.light-mode .bim-profile-table td {
+  border-bottom: 1px solid #E2E8F0 !important;
+  background: transparent !important;
+}
+
+body.light-mode .bim-demo-lbl {
+  color: #475569 !important;
+  font-weight: 500;
+}
+
+body.light-mode .bim-demo-val {
+  color: #0F172A !important;
+  font-weight: 600;
+}
+
+body.light-mode .bim-demo-id {
+  color: #0284C7 !important;
+  font-weight: 700;
 }

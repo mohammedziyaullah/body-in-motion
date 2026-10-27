@@ -62,7 +62,10 @@ page_home_ui <- function() {
         class = "col-lg-6",
         div(
           class = "bim-anatomical-wrap",
-          tags$img(src = "images/anatomical_body.svg", style = "width: 78%; height: 500px; object-fit: contain; filter: drop-shadow(0 0 25px rgba(0, 207, 255, 0.25));"),
+          # Dark Theme 3D Body (Seamless navy background)
+          tags$img(src = "images/anatomical_hero.jpg", class = "bim-anatomical-img bim-body-dark", alt = "Human Body 3D Anatomical Simulation (Dark)"),
+          # Day / Light Theme 3D Body (Pure white background, blue body, red heart & veins)
+          tags$img(src = "images/anatomical_hero_light.png", class = "bim-anatomical-img bim-body-light", alt = "Human Body 3D Anatomical Simulation (Light)"),
           
           # 4 Connected Physiological Callouts
           div(
@@ -197,8 +200,8 @@ page_home_ui <- function() {
             span(class = "bim-feature-title", "Data Exploration")
         ),
         div(class = "bim-feature-desc", "Explore and filter real wearable sensor recordings across rest, aerobic exercise, anaerobic exercise, and stress."),
-        div(class = "bim-feature-graphic",
-            HTML('<svg width="100%" height="45" viewBox="0 0 200 45"><path d="M0 25 Q 30 10, 60 22 T 120 15 T 180 30 T 200 20" fill="none" stroke="#00CFFF" stroke-width="2"/><path d="M0 32 Q 40 28, 80 18 T 140 25 T 200 15" fill="none" stroke="#FF4B6E" stroke-width="1.5"/></svg>')
+        div(class = "bim-feature-graphic graphic-data",
+            HTML('<svg width="100%" height="52" viewBox="0 0 200 52"><defs><linearGradient id="grad-wave1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#00CFFF" stop-opacity="0.95"/><stop offset="50%" stop-color="#087BFF" stop-opacity="1"/><stop offset="100%" stop-color="#00E5FF" stop-opacity="1"/></linearGradient><linearGradient id="grad-wave2" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FF4B6E" stop-opacity="0.95"/><stop offset="100%" stop-color="#FFAA00" stop-opacity="0.95"/></linearGradient></defs><line x1="0" y1="13" x2="200" y2="13" stroke="rgba(0, 207, 255, 0.2)" stroke-dasharray="2,4"/><line x1="0" y1="26" x2="200" y2="26" stroke="rgba(0, 207, 255, 0.25)" stroke-dasharray="2,4"/><line x1="0" y1="39" x2="200" y2="39" stroke="rgba(0, 207, 255, 0.2)" stroke-dasharray="2,4"/><path d="M0 34 Q 30 14, 60 28 T 120 18 T 170 36 T 200 24" fill="none" stroke="url(#grad-wave1)" stroke-width="2.6" stroke-linecap="round"/><path d="M0 40 Q 40 36, 75 22 T 130 30 T 200 18" fill="none" stroke="url(#grad-wave2)" stroke-width="2.2" stroke-linecap="round"/><circle cx="60" cy="28" r="3.5" fill="#00CFFF"/><circle cx="120" cy="18" r="3.5" fill="#087BFF"/><circle cx="75" cy="22" r="3" fill="#FF4B6E"/></svg>')
         )
       ),
       div(
@@ -208,8 +211,8 @@ page_home_ui <- function() {
             span(class = "bim-feature-title", "Scenario Simulation")
         ),
         div(class = "bim-feature-desc", "Adjust activity type, intensity level, and duration to predict heart rate response via Random Forest."),
-        div(class = "bim-feature-graphic",
-            HTML('<svg width="100%" height="45" viewBox="0 0 200 45"><rect x="15" y="10" width="40" height="25" rx="3" fill="rgba(59,130,246,0.2)"/><rect x="65" y="5" width="70" height="30" rx="3" fill="rgba(239,68,68,0.2)"/><rect x="145" y="10" width="40" height="25" rx="3" fill="rgba(16,232,148,0.2)"/><path d="M10 32 Q 50 30, 95 12 T 160 28 T 190 32" fill="none" stroke="#FF4B6E" stroke-dasharray="3,3" stroke-width="2"/></svg>')
+        div(class = "bim-feature-graphic graphic-sim",
+            HTML('<svg width="100%" height="52" viewBox="0 0 200 52"><defs><linearGradient id="grad-rest" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#3B82F6"/><stop offset="100%" stop-color="#1D4ED8"/></linearGradient><linearGradient id="grad-ex" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#FF4B6E"/><stop offset="100%" stop-color="#DC2626"/></linearGradient><linearGradient id="grad-rec" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#10E894"/><stop offset="100%" stop-color="#059669"/></linearGradient></defs><rect x="12" y="14" width="46" height="26" rx="6" fill="url(#grad-rest)"/><text x="35" y="31" font-size="9" font-weight="700" fill="#FFFFFF" text-anchor="middle" font-family="Inter, sans-serif">REST</text><rect x="66" y="8" width="70" height="36" rx="6" fill="url(#grad-ex)"/><text x="101" y="30" font-size="9" font-weight="700" fill="#FFFFFF" text-anchor="middle" font-family="Inter, sans-serif">EXERCISE</text><rect x="144" y="14" width="46" height="26" rx="6" fill="url(#grad-rec)"/><text x="167" y="31" font-size="9" font-weight="700" fill="#FFFFFF" text-anchor="middle" font-family="Inter, sans-serif">RECOV</text><path d="M10 38 Q 45 36, 101 12 T 160 32 T 195 38" fill="none" stroke="#FFDD00" stroke-dasharray="4,3" stroke-width="2.5"/><circle cx="101" cy="12" r="3.5" fill="#FFDD00"/></svg>')
         )
       ),
       div(
@@ -219,8 +222,8 @@ page_home_ui <- function() {
             span(class = "bim-feature-title", "Visual Analytics")
         ),
         div(class = "bim-feature-desc", "View pairwise comparisons, correlation heatmaps, recovery dynamics, and distribution models."),
-        div(class = "bim-feature-graphic",
-            HTML('<svg width="100%" height="45" viewBox="0 0 200 45"><rect x="25" y="20" width="20" height="20" fill="#3B82F6"/><rect x="65" y="10" width="20" height="30" fill="#10E894"/><rect x="105" y="5" width="20" height="35" fill="#FF4B6E"/><rect x="145" y="15" width="20" height="25" fill="#FFAA00"/></svg>')
+        div(class = "bim-feature-graphic graphic-analytics",
+            HTML('<svg width="100%" height="52" viewBox="0 0 200 52"><defs><linearGradient id="bar-b1" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#00CFFF"/><stop offset="100%" stop-color="#087BFF"/></linearGradient><linearGradient id="bar-b2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#10E894"/><stop offset="100%" stop-color="#059669"/></linearGradient><linearGradient id="bar-b3" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#FF4B6E"/><stop offset="100%" stop-color="#E11D48"/></linearGradient><linearGradient id="bar-b4" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#FFAA00"/><stop offset="100%" stop-color="#D97706"/></linearGradient></defs><line x1="15" y1="46" x2="185" y2="46" stroke="rgba(148, 163, 184, 0.4)" stroke-width="1.5"/><rect x="25" y="24" width="26" height="22" rx="4" fill="url(#bar-b1)"/><rect x="68" y="14" width="26" height="32" rx="4" fill="url(#bar-b2)"/><rect x="111" y="6" width="26" height="40" rx="4" fill="url(#bar-b3)"/><rect x="154" y="18" width="26" height="28" rx="4" fill="url(#bar-b4)"/><path d="M38 22 L 81 12 L 124 5 L 167 16" fill="none" stroke="#FFFFFF" stroke-dasharray="2,2" stroke-width="1.5" opacity="0.95"/><circle cx="38" cy="22" r="2.5" fill="#FFFFFF"/><circle cx="81" cy="12" r="2.5" fill="#FFFFFF"/><circle cx="124" cy="5" r="3" fill="#FFFFFF"/><circle cx="167" cy="16" r="2.5" fill="#FFFFFF"/></svg>')
         )
       ),
       div(
@@ -230,8 +233,8 @@ page_home_ui <- function() {
             span(class = "bim-feature-title", "System Intelligence")
         ),
         div(class = "bim-feature-desc", "Explore systemic physiological coordination, sensor specifications, and enterprise analytics methodology."),
-        div(class = "bim-feature-graphic",
-            HTML('<svg width="100%" height="45" viewBox="0 0 200 45"><circle cx="100" cy="22" r="16" fill="rgba(0,207,255,0.2)" stroke="#00CFFF" stroke-width="1.5"/><circle cx="100" cy="22" r="6" fill="#FF4B6E"/></svg>')
+        div(class = "bim-feature-graphic graphic-intel",
+            HTML('<svg width="100%" height="52" viewBox="0 0 200 52"><defs><linearGradient id="radar-glow" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#A855F7" stop-opacity="0.35"/><stop offset="100%" stop-color="#00CFFF" stop-opacity="0.45"/></linearGradient></defs><circle cx="100" cy="26" r="24" fill="url(#radar-glow)" stroke="#A855F7" stroke-width="1.6" stroke-dasharray="3,3"/><circle cx="100" cy="26" r="16" fill="none" stroke="#00CFFF" stroke-width="1.8"/><circle cx="100" cy="26" r="8" fill="none" stroke="#FF4B6E" stroke-width="1.5"/><circle cx="100" cy="26" r="4" fill="#FF4B6E"/><line x1="72" y1="26" x2="128" y2="26" stroke="#00CFFF" stroke-width="1" opacity="0.8"/><line x1="100" y1="2" x2="100" y2="50" stroke="#00CFFF" stroke-width="1" opacity="0.8"/><circle cx="112" cy="16" r="2.5" fill="#10E894"/><circle cx="86" cy="34" r="2" fill="#FFAA00"/></svg>')
         )
       )
     )
@@ -280,7 +283,7 @@ page_data_ui <- function() {
           # Time Range Slider
           div(class = "bim-form-group",
               tags$label(class = "bim-form-label", "Time Range (minutes)"),
-              sliderInput("data_time_range", NULL, min = 0, max = 35, value = c(0, 30), step = 1, width = "100%")
+              sliderInput("data_time_range", NULL, min = 0, max = 60, value = c(0, 45), step = 1, width = "100%")
           ),
           
           # Signals to Display Checkboxes
@@ -607,39 +610,40 @@ page_about_ui <- function() {
             div(
               class = "col-md-8",
               h4(class = "bim-card-title mb-3", "Project Overview"),
-              p(style = "color: #C0D4EC; line-height: 1.6;",
+              p(class = "bim-text-lead",
                 "Body in Motion is an enterprise-grade physiological intelligence platform designed to analyze, monitor, and simulate human physiological dynamics under physical stress and exercise protocols using clinical-grade wearable telemetry. The system enables healthcare professionals, performance scientists, and analytics teams to explore multi-modal signals, quantify systemic adaptations, and predict cardiovascular workload in real time."),
               div(
                 class = "row mt-4",
                 div(class = "col-sm-6 mb-3",
                     div(class = "d-flex align-items-start gap-2",
                         div(style = "color: #087BFF; font-size: 1.2rem;", HTML('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>')),
-                        div(div(strong("Real World Data")), div(class = "small text-muted", "Wearable sensor recordings from rest, exercise & stress sessions."))
+                        div(div(strong(class = "bim-about-feature-title", "Real World Data")), div(class = "small bim-about-feature-desc", "Wearable sensor recordings from rest, exercise & stress sessions."))
                     )
                 ),
                 div(class = "col-sm-6 mb-3",
                     div(class = "d-flex align-items-start gap-2",
                         div(style = "color: #FF4B6E; font-size: 1.2rem;", HTML('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>')),
-                        div(div(strong("Interactive Exploration")), div(class = "small text-muted", "Visualize & analyze multi-signal physiological dynamics."))
+                        div(div(strong(class = "bim-about-feature-title", "Interactive Exploration")), div(class = "small bim-about-feature-desc", "Visualize & analyze multi-signal physiological dynamics."))
                     )
                 ),
                 div(class = "col-sm-6 mb-3",
                     div(class = "d-flex align-items-start gap-2",
                         div(style = "color: #10E894; font-size: 1.2rem;", HTML('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>')),
-                        div(div(strong("Scenario Simulation")), div(class = "small text-muted", "Adjust activity parameters to explore simulated responses."))
+                        div(div(strong(class = "bim-about-feature-title", "Scenario Simulation")), div(class = "small bim-about-feature-desc", "Adjust activity parameters to explore simulated responses."))
                     )
                 ),
                 div(class = "col-sm-6 mb-3",
                     div(class = "d-flex align-items-start gap-2",
                         div(style = "color: #FFAA00; font-size: 1.2rem;", HTML('<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>')),
-                        div(div(strong("Clinical & Analytical Intelligence")), div(class = "small text-muted", "Engineered for health telemetry, performance analytics & physiological monitoring."))
+                        div(div(strong(class = "bim-about-feature-title", "Clinical & Analytical Intelligence")), div(class = "small bim-about-feature-desc", "Engineered for health telemetry, performance analytics & physiological monitoring."))
                     )
                 )
               )
             ),
             div(
               class = "col-md-4 text-center",
-              tags$img(src = "images/anatomical_body.svg", style = "width: 100%; max-height: 280px; object-fit: contain; filter: drop-shadow(0 0 15px rgba(0, 207, 255, 0.25));")
+              tags$img(src = "images/anatomical_hero.jpg", class = "bim-body-dark", style = "width: 100%; max-height: 320px; object-fit: contain; filter: drop-shadow(0 0 25px rgba(0, 207, 255, 0.35));"),
+              tags$img(src = "images/anatomical_hero_light.png", class = "bim-body-light", style = "width: 100%; max-height: 320px; object-fit: contain;")
             )
           )
         ),
@@ -650,7 +654,7 @@ page_about_ui <- function() {
           class = "bim-card mb-4",
           h4(class = "bim-card-title mb-3", "Dataset Information"),
           tags$table(
-            class = "table table-dark table-borderless", style = "background: transparent;",
+            class = "table bim-info-table",
             tags$tbody(
               tags$tr(tags$td(strong("Dataset Name")), tags$td("Wearable Device Dataset from Induced Stress and Structured Exercise Sessions")),
               tags$tr(tags$td(strong("Source & DOI")), tags$td("PhysioNet (Open Access, v1.0.1) — doi:10.13026/g56c-0k84")),
@@ -667,14 +671,14 @@ page_about_ui <- function() {
           id = "sec-methodology",
           class = "bim-card mb-4",
           h4(class = "bim-card-title mb-3", "Machine Learning Methodology"),
-          p(style = "color: #C0D4EC; line-height: 1.6;",
+          p(class = "bim-text-lead",
             "The predictive engine uses a Random Forest Regressor implemented in the high-performance R 'ranger' package. Sliding windows of 30 seconds are constructed with strict temporal causality: all predictor features are extracted exclusively from prior observations [t-30s, t], while the prediction target represents future window [t, t+30s] heart rate. To guarantee zero data leakage, a participant-level disjoint train/test split is enforced (no subject records appear in both training and test sets)."),
           div(
             class = "row mt-3",
             div(class = "col-md-6",
-                div(class = "p-3 rounded", style = "background: rgba(8, 23, 40, 0.6); border: 1px solid #163456;",
-                    h6(style = "color: #00CFFF;", "Held-Out Model Performance"),
-                    tags$ul(class = "list-unstyled small text-muted mb-0",
+                div(class = "p-3 rounded bim-methodology-card",
+                    h6(class = "perf-title", "Held-Out Model Performance"),
+                    tags$ul(class = "list-unstyled mb-0",
                             tags$li(paste("• Random Forest MAE: ", if(!is.null(eval_results)) paste(round(eval_results$rf_metrics$mae, 2), "BPM") else "2.69 BPM")),
                             tags$li(paste("• Random Forest RMSE: ", if(!is.null(eval_results)) paste(round(eval_results$rf_metrics$rmse, 2), "BPM") else "4.10 BPM")),
                             tags$li(paste("• Random Forest R²: ", if(!is.null(eval_results)) round(eval_results$rf_metrics$r2, 4) else "0.9773")),
@@ -683,9 +687,9 @@ page_about_ui <- function() {
                 )
             ),
             div(class = "col-md-6",
-                div(class = "p-3 rounded", style = "background: rgba(8, 23, 40, 0.6); border: 1px solid #163456;",
-                    h6(style = "color: #FFAA00;", "Held-Out Baseline Comparisons"),
-                    tags$ul(class = "list-unstyled small text-muted mb-0",
+                div(class = "p-3 rounded bim-methodology-card",
+                    h6(class = "base-title", "Held-Out Baseline Comparisons"),
+                    tags$ul(class = "list-unstyled mb-0",
                             tags$li(paste("• Persistence Baseline MAE: ", if(!is.null(eval_results)) paste(round(eval_results$persist_metrics$mae, 2), "BPM") else "2.49 BPM")),
                             tags$li(paste("• Window Mean Baseline MAE: ", if(!is.null(eval_results)) paste(round(eval_results$mean_metrics$mae, 2), "BPM") else "4.38 BPM")),
                             tags$li("• Top Feature: Prior Window Last HR (Impurity: 530,352)"),
@@ -701,7 +705,7 @@ page_about_ui <- function() {
           id = "sec-references",
           class = "bim-card mb-4",
           h4(class = "bim-card-title mb-3", "References & Dataset Citations"),
-          tags$ol(class = "text-muted small", style = "line-height: 1.8;",
+          tags$ol(class = "bim-references-list small",
                   tags$li("PhysioNet: Wearable Device Dataset from Induced Stress and Structured Exercise Sessions (v1.0.1). PhysioNet, 2024. https://doi.org/10.13026/g56c-0k84"),
                   tags$li("Wright, M. N. & Ziegler, A. (2017). ranger: A Fast Implementation of Random Forests for High Dimensional Data in C++ and R. Journal of Statistical Software, 77(1), 1-17."),
                   tags$li("Garbarino, M., et al. (2014). Empatica E4: A multi-sensor device for non-invasive real-time physiological monitoring. EAI Endorsed Transactions on Pervasive Health and Technology.")
@@ -833,11 +837,17 @@ ui <- fluidPage(
       class = "bim-nav-right",
       div(
         class = "bim-selector-wrap",
-        "Participant:",
-        selectInput("global_participant", NULL, choices = participant_choices, selected = participant_choices[1], width = "90px")
+        tags$span(class = "bim-selector-label", "Participant:"),
+        selectInput("global_participant", NULL, choices = participant_choices, selected = participant_choices[1], width = "88px")
       ),
-      actionButton("theme_toggle", HTML('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'), 
-                   class = "btn btn-sm btn-outline-secondary", style = "border-color: #163456; color: #00CFFF;", onclick = "bimToggleTheme();", title = "Toggle Dark / Day Theme")
+      tags$button(
+        id = "theme_toggle",
+        type = "button",
+        class = "bim-theme-toggle-btn",
+        onclick = "bimToggleTheme(event);",
+        title = "Toggle Dark / Day Theme",
+        HTML('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>')
+      )
     )
   ),
 
@@ -878,7 +888,79 @@ server <- function(input, output, session) {
     updateSelectInput(session, "global_participant", selected = input$profile_participant)
   })
 
+  # Parse URL query parameters on session startup for direct bookmarking/testing
+  observe({
+    query <- parseQueryString(session$clientData$url_search)
+    if (!is.null(query$activity)) {
+      act <- query$activity
+      if (act %in% c("Rest", "Aerobic Exercise", "Anaerobic Exercise", "Stress Session")) {
+        updateSelectInput(session, "data_activity", selected = act)
+        updateCheckboxGroupInput(session, "data_activity_checks", selected = act)
+      } else if (act == "All Conditions") {
+        updateSelectInput(session, "data_activity", selected = "All Conditions")
+        updateCheckboxGroupInput(session, "data_activity_checks", selected = c("Rest", "Aerobic Exercise", "Anaerobic Exercise", "Stress Session"))
+      }
+    }
+    if (!is.null(query$participant)) {
+      updateSelectInput(session, "data_participant", selected = query$participant)
+      updateSelectInput(session, "global_participant", selected = query$participant)
+    }
+  })
+
   # --- PAGE 2: DATA EXPLORATION REACTIVES & PLOTS ---
+  # Synchronize Activity Condition Dropdown -> Checkboxes
+  observeEvent(input$data_activity, {
+    req(input$data_activity)
+    if (input$data_activity == "All Conditions") {
+      updateCheckboxGroupInput(session, "data_activity_checks",
+                               selected = c("Rest", "Aerobic Exercise", "Anaerobic Exercise", "Stress Session"))
+    } else {
+      updateCheckboxGroupInput(session, "data_activity_checks",
+                               selected = input$data_activity)
+    }
+  }, ignoreInit = TRUE)
+
+  # Synchronize Checkboxes -> Dropdown
+  observeEvent(input$data_activity_checks, {
+    req(input$data_activity_checks)
+    all_conds <- c("Rest", "Aerobic Exercise", "Anaerobic Exercise", "Stress Session")
+    if (length(input$data_activity_checks) == 4) {
+      updateSelectInput(session, "data_activity", selected = "All Conditions")
+    } else if (length(input$data_activity_checks) == 1) {
+      updateSelectInput(session, "data_activity", selected = input$data_activity_checks[1])
+    }
+  }, ignoreInit = TRUE)
+
+  # Dynamically adjust the Time Range slider based on the selected participant & activity condition(s)
+  observe({
+    req(sessions_data, input$data_participant)
+    target_sub <- input$data_participant
+    
+    active_conds <- if (!is.null(input$data_activity_checks) && length(input$data_activity_checks) > 0) {
+      input$data_activity_checks
+    } else if (!is.null(input$data_activity) && input$data_activity != "All Conditions") {
+      input$data_activity
+    } else {
+      c("Rest", "Aerobic Exercise", "Anaerobic Exercise", "Stress Session")
+    }
+    
+    sub_df <- sessions_data %>% filter(participant_id == target_sub, activity_condition %in% active_conds)
+    if (nrow(sub_df) > 0) {
+      chained <- build_continuous_timeline(sub_df)
+      max_mins <- max(1, ceiling(max(chained$timeline_sec, na.rm = TRUE) / 60))
+      
+      cur_range <- isolate(input$data_time_range)
+      new_val <- if (!is.null(cur_range) && length(cur_range) == 2 && cur_range[2] <= max_mins && cur_range[1] < cur_range[2]) {
+        cur_range
+      } else {
+        c(0, max_mins)
+      }
+      
+      updateSliderInput(session, "data_time_range",
+                        min = 0, max = max_mins, value = new_val, step = 1)
+    }
+  })
+
   filtered_exploration_data <- reactive({
     req(sessions_data)
     df <- sessions_data
@@ -886,27 +968,26 @@ server <- function(input, output, session) {
     target_sub <- if (!is.null(input$data_participant)) input$data_participant else participant_choices[1]
     df <- df %>% filter(participant_id == target_sub)
     
-    # Filter session category to maintain a continuous, monotonic timeline
-    if (is.null(input$data_activity) || input$data_activity == "All Conditions") {
-      # Default to Aerobic session which contains Rest, Active, and Recovery phases
-      df <- df %>% filter(activity_category == "AEROBIC")
+    # Filter by selected activity condition(s)
+    selected_conds <- if (!is.null(input$data_activity_checks) && length(input$data_activity_checks) > 0) {
+      input$data_activity_checks
+    } else if (!is.null(input$data_activity) && input$data_activity != "All Conditions") {
+      input$data_activity
     } else {
-      act_cat <- case_when(
-        input$data_activity == "Aerobic Exercise" ~ "AEROBIC",
-        input$data_activity == "Anaerobic Exercise" ~ "ANAEROBIC",
-        input$data_activity == "Stress Session" ~ "STRESS",
-        TRUE ~ "AEROBIC"
-      )
-      df <- df %>% filter(activity_category == act_cat)
+      c("Rest", "Aerobic Exercise", "Anaerobic Exercise", "Stress Session")
     }
     
-    if (!is.null(input$data_activity_checks) && length(input$data_activity_checks) > 0) {
-      df <- df %>% filter(activity_condition %in% input$data_activity_checks)
-    }
+    df <- df %>% filter(activity_condition %in% selected_conds)
+    if (nrow(df) == 0) return(df)
     
-    if (!is.null(input$data_time_range)) {
-      df <- df %>% filter(elapsed_sec >= input$data_time_range[1] * 60,
-                          elapsed_sec <= input$data_time_range[2] * 60)
+    # Build continuous, non-overlapping timeline across selected condition sessions
+    df <- build_continuous_timeline(df)
+    
+    # Filter by Time Range Slider on the continuous timeline
+    if (!is.null(input$data_time_range) && length(input$data_time_range) == 2) {
+      min_sec <- input$data_time_range[1] * 60
+      max_sec <- input$data_time_range[2] * 60
+      df <- df %>% filter(timeline_sec >= min_sec, timeline_sec <= max_sec)
     }
     
     df
@@ -915,62 +996,65 @@ server <- function(input, output, session) {
   observeEvent(input$btn_reset_filters, {
     updateSelectInput(session, "data_activity", selected = "All Conditions")
     updateCheckboxGroupInput(session, "data_activity_checks", selected = c("Rest", "Aerobic Exercise", "Anaerobic Exercise", "Stress Session"))
-    updateSliderInput(session, "data_time_range", value = c(0, 30))
     updateCheckboxGroupInput(session, "data_signals", selected = c("heart_rate", "skin_temp", "eda", "movement_g"))
   })
 
   output$plot_data_timeseries <- renderPlotly({
     df <- filtered_exploration_data()
-    if (nrow(df) == 0) df <- sessions_data %>% filter(participant_id == participant_choices[1])
     signals <- if (!is.null(input$data_signals) && length(input$data_signals) > 0) input$data_signals else c("heart_rate", "skin_temp", "eda", "movement_g")
-    plot_multi_signal_timeseries(df, signals = signals)
+    plot_multi_signal_timeseries(df, signals = signals, time_range = input$data_time_range)
   })
 
   output$plot_data_hr_dist <- renderPlotly({
-    target_sub <- if (!is.null(input$data_participant)) input$data_participant else participant_choices[1]
-    sub_all <- sessions_data %>% filter(participant_id == target_sub)
-    if (nrow(sub_all) == 0) sub_all <- sessions_data
-    plot_hr_distribution_density(sub_all)
+    df <- filtered_exploration_data()
+    plot_hr_distribution_density(df)
   })
 
   output$plot_data_heatmap <- renderPlotly({
-    target_sub <- if (!is.null(input$data_participant)) input$data_participant else participant_choices[1]
-    sub_all <- sessions_data %>% filter(participant_id == target_sub)
-    if (nrow(sub_all) == 0) sub_all <- sessions_data
-    plot_correlation_heatmap(sub_all)
+    df <- filtered_exploration_data()
+    signals <- if (!is.null(input$data_signals) && length(input$data_signals) > 0) input$data_signals else c("heart_rate", "skin_temp", "eda", "movement_g", "bvp")
+    plot_correlation_heatmap(df, signals = signals)
   })
 
   output$table_data_summary <- renderTable({
     df <- filtered_exploration_data()
     if (nrow(df) == 0) return(data.frame(Message = "No data available for current selection"))
     
-    df %>%
-      summarise(
-        `Observations (s)` = n(),
-        `Mean HR (BPM)` = round(mean(heart_rate, na.rm = TRUE), 1),
-        `Max HR (BPM)`  = round(max(heart_rate, na.rm = TRUE), 1),
-        `Min HR (BPM)`  = round(min(heart_rate, na.rm = TRUE), 1),
-        `Mean Temp (°C)` = round(mean(skin_temp, na.rm = TRUE), 2),
-        `Mean EDA (µS)` = round(mean(eda, na.rm = TRUE), 3),
-        `Mean Move (g)` = round(mean(movement_g, na.rm = TRUE), 3)
-      )
+    calc_mean <- function(x) if (all(is.na(x))) NA else round(mean(x, na.rm = TRUE), 2)
+    calc_max  <- function(x) if (all(is.na(x))) NA else round(max(x, na.rm = TRUE), 2)
+    calc_min  <- function(x) if (all(is.na(x))) NA else round(min(x, na.rm = TRUE), 2)
+    
+    data.frame(
+      `Metric` = c("Heart Rate (BPM)", "Skin Temperature (°C)", "EDA (µS)", "Movement (g)", "BVP"),
+      `Observations` = c(sum(!is.na(df$heart_rate)), sum(!is.na(df$skin_temp)), sum(!is.na(df$eda)), sum(!is.na(df$movement_g)), sum(!is.na(df$bvp))),
+      `Mean` = c(calc_mean(df$heart_rate), calc_mean(df$skin_temp), calc_mean(df$eda), calc_mean(df$movement_g), calc_mean(df$bvp)),
+      `Min`  = c(calc_min(df$heart_rate), calc_min(df$skin_temp), calc_min(df$eda), calc_min(df$movement_g), calc_min(df$bvp)),
+      `Max`  = c(calc_max(df$heart_rate), calc_max(df$skin_temp), calc_max(df$eda), calc_max(df$movement_g), calc_max(df$bvp)),
+      check.names = FALSE
+    )
   }, striped = TRUE, hover = TRUE, bordered = TRUE)
 
   output$dt_data_records <- renderDT({
     df <- filtered_exploration_data()
-    if (nrow(df) == 0) return(NULL)
+    if (nrow(df) == 0) return(datatable(data.frame(Message = "No records match the current filter selection"), options = list(dom = 't')))
     
-    df %>%
-      select(elapsed_sec, activity_condition, heart_rate, skin_temp, eda, movement_g) %>%
-      mutate(
-        `Time (min)` = round(elapsed_sec / 60, 2),
-        `HR (BPM)` = round(heart_rate, 1),
-        `Temp (°C)` = round(skin_temp, 2),
-        `EDA (µS)` = round(eda, 3),
-        `Move (g)` = round(movement_g, 3)
-      ) %>%
-      select(`Time (min)`, activity_condition, `HR (BPM)`, `Temp (°C)`, `EDA (µS)`, `Move (g)`) %>%
-      datatable(options = list(pageLength = 8, scrollX = TRUE, dom = 'tip'))
+    t_min <- if ("timeline_sec" %in% colnames(df)) round(df$timeline_sec / 60, 2) else round(df$elapsed_sec / 60, 2)
+    
+    res_df <- data.frame(
+      `Time (min)` = t_min,
+      `Condition` = df$activity_condition,
+      `HR (BPM)` = round(df$heart_rate, 1),
+      `Temp (°C)` = round(df$skin_temp, 2),
+      `EDA (µS)` = round(df$eda, 3),
+      `Move (g)` = round(df$movement_g, 3),
+      check.names = FALSE
+    )
+    
+    if (!is.null(input$data_signals) && "bvp" %in% input$data_signals) {
+      res_df$`BVP` <- round(df$bvp, 3)
+    }
+    
+    datatable(res_df, options = list(pageLength = 8, scrollX = TRUE, dom = 'tip'), rownames = FALSE)
   })
 
   # --- PAGE 3: SCENARIO SIMULATION REACTIVES & PLOTS ---
@@ -1137,23 +1221,25 @@ server <- function(input, output, session) {
     reg_str <- if (nrow(sub_demo) > 0 && !is.na(sub_demo$regular_exercise[1])) sub_demo$regular_exercise[1] else "Yes"
     
     tags$table(
-      class = "table table-dark table-sm table-borderless small mb-0", style = "background: transparent;",
+      class = "table bim-info-table bim-profile-table small mb-0",
       tags$tbody(
-        tags$tr(tags$td(class = "text-muted", "Participant ID"), tags$td(strong(sub_id), class = "text-end text-cyan")),
-        tags$tr(tags$td(class = "text-muted", "Age"), tags$td(age_str, class = "text-end")),
-        tags$tr(tags$td(class = "text-muted", "Gender"), tags$td(gen_str, class = "text-end")),
-        tags$tr(tags$td(class = "text-muted", "Height"), tags$td(hgt_str, class = "text-end")),
-        tags$tr(tags$td(class = "text-muted", "Weight"), tags$td(wgt_str, class = "text-end")),
-        tags$tr(tags$td(class = "text-muted", "Regular Exercise"), tags$td(reg_str, class = "text-end"))
+        tags$tr(tags$td(class = "bim-demo-lbl", "Participant ID"), tags$td(strong(sub_id), class = "text-end bim-demo-id")),
+        tags$tr(tags$td(class = "bim-demo-lbl", "Age"), tags$td(age_str, class = "text-end bim-demo-val")),
+        tags$tr(tags$td(class = "bim-demo-lbl", "Gender"), tags$td(gen_str, class = "text-end bim-demo-val")),
+        tags$tr(tags$td(class = "bim-demo-lbl", "Height"), tags$td(hgt_str, class = "text-end bim-demo-val")),
+        tags$tr(tags$td(class = "bim-demo-lbl", "Weight"), tags$td(wgt_str, class = "text-end bim-demo-val")),
+        tags$tr(tags$td(class = "bim-demo-lbl", "Regular Exercise"), tags$td(reg_str, class = "text-end bim-demo-val"))
       )
     )
   })
+  outputOptions(output, "ui_profile_demographics", suspendWhenHidden = FALSE)
 
   output$txt_profile_session_subtitle <- renderText({
     sub_id <- if (!is.null(input$profile_participant)) input$profile_participant else participant_choices[1]
     sess   <- if (!is.null(input$profile_session_choice)) input$profile_session_choice else "Aerobic Exercise"
     paste(sub_id, "—", sess, "Protocol Recording")
   })
+  outputOptions(output, "txt_profile_session_subtitle", suspendWhenHidden = FALSE)
 
   output$plot_profile_timeseries <- renderPlotly({
     sub_id <- if (!is.null(input$profile_participant)) input$profile_participant else participant_choices[1]

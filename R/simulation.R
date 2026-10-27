@@ -183,46 +183,82 @@ simulate_physiological_response <- function(
   list(simulated = sim_df, metrics = summary_metrics)
 }
 
-#' Plot Simulated vs Real Heart Rate with Protocol Zone Shading
+#' Plot Simulated vs Real Heart Rate with Protocol Zone Shading & Real-Time Cursor
 plot_simulated_vs_real_hr <- function(sim_df, real_df = NULL, rest_end = 3, recov_start = 17, total_dur = 20) {
   p <- plot_ly()
   
-  # Real Observed Data line (if available for comparison)
+  # 1. Real Observed Telemetry (Empirical Ground-Truth Reference across full session)
   if (!is.null(real_df) && nrow(real_df) > 0) {
     p <- p %>% add_lines(
       x = real_df$elapsed_sec / 60,
       y = real_df$heart_rate,
-      name = "Real Measured Data",
-      line = list(color = "#00CFFF", width = 2),
-      opacity = 0.9
+      name = "Real Measured Telemetry",
+      line = list(color = "#00CFFF", width = 1.8),
+      opacity = 0.65
     )
   }
   
-  # Simulated Model Heart Rate Line
-  p <- p %>% add_lines(
-    x = sim_df$time_min,
-    y = sim_df$heart_rate,
-    name = "Simulated Model (ranger RF)",
-    line = list(color = "#FF4B6E", width = 2.5, dash = "dash")
-  )
+  # 2. Simulated Model Heart Rate Line (Progressively revealed up to current step)
+  if (!is.null(sim_df) && nrow(sim_df) > 0) {
+    p <- p %>% add_lines(
+      x = sim_df$time_min,
+      y = sim_df$heart_rate,
+      name = "Simulated Model (ranger RF)",
+      line = list(color = "#FF4B6E", width = 2.5, dash = "solid")
+    )
+    
+    # Current Simulated Time Playback Cursor & Marker
+    cur_idx <- nrow(sim_df)
+    cur_time <- sim_df$time_min[cur_idx]
+    cur_hr   <- sim_df$heart_rate[cur_idx]
+    
+    cur_min_int <- floor(cur_time)
+    cur_sec_int <- round((cur_time %% 1) * 60)
+    time_label  <- sprintf("%02d:%02d", cur_min_int, cur_sec_int)
+    
+    p <- p %>% add_markers(
+      x = cur_time,
+      y = cur_hr,
+      name = "Current Simulated Time",
+      marker = list(
+        color = "#FF4B6E",
+        size = 10,
+        line = list(color = "#FFFFFF", width = 2)
+      ),
+      showlegend = FALSE,
+      hovertemplate = paste0("<b>Simulated Time:</b> ", time_label, "<br><b>HR:</b> ", cur_hr, " BPM<extra></extra>")
+    )
+  } else {
+    cur_time <- 0
+  }
   
   # Background Protocol Zone Rectangles
   zone_shapes <- list(
-    list(type = "rect", fillcolor = "rgba(59, 130, 246, 0.15)", line = list(width = 0),
+    list(type = "rect", fillcolor = "rgba(59, 130, 246, 0.12)", line = list(width = 0),
          x0 = 0, x1 = rest_end, y0 = 40, y1 = 215, layer = "below"),
-    list(type = "rect", fillcolor = "rgba(239, 68, 68, 0.16)", line = list(width = 0),
+    list(type = "rect", fillcolor = "rgba(239, 68, 68, 0.13)", line = list(width = 0),
          x0 = rest_end, x1 = recov_start, y0 = 40, y1 = 215, layer = "below"),
-    list(type = "rect", fillcolor = "rgba(16, 232, 148, 0.15)", line = list(width = 0),
+    list(type = "rect", fillcolor = "rgba(16, 232, 148, 0.12)", line = list(width = 0),
          x0 = recov_start, x1 = total_dur, y0 = 40, y1 = 215, layer = "below")
   )
+  
+  # Vertical Cursor Line at Current Simulated Time
+  if (cur_time > 0 && cur_time < total_dur) {
+    zone_shapes[[length(zone_shapes) + 1]] <- list(
+      type = "line",
+      x0 = cur_time, x1 = cur_time,
+      y0 = 45, y1 = 210,
+      line = list(color = "rgba(255, 75, 110, 0.7)", width = 1.8, dash = "dot")
+    )
+  }
   
   # Annotations and layout
   p <- p %>% layout(
     shapes = zone_shapes,
     annotations = list(
-      list(x = rest_end / 2, y = 200, text = "Rest", showarrow = FALSE, font = list(color = "#60A5FA", size = 11)),
-      list(x = (rest_end + recov_start) / 2, y = 200, text = "Exercise Protocol", showarrow = FALSE, font = list(color = "#F87171", size = 11)),
-      list(x = (recov_start + total_dur) / 2, y = 200, text = "Recovery", showarrow = FALSE, font = list(color = "#34D399", size = 11))
+      list(x = rest_end / 2, y = 205, text = "Rest Phase", showarrow = FALSE, font = list(color = "#60A5FA", size = 10)),
+      list(x = (rest_end + recov_start) / 2, y = 205, text = "Exercise Protocol", showarrow = FALSE, font = list(color = "#F87171", size = 10)),
+      list(x = (recov_start + total_dur) / 2, y = 205, text = "Recovery Phase", showarrow = FALSE, font = list(color = "#34D399", size = 10))
     ),
     paper_bgcolor = "rgba(0,0,0,0)",
     plot_bgcolor  = "rgba(0,0,0,0)",
@@ -235,7 +271,7 @@ plot_simulated_vs_real_hr <- function(sim_df, real_df = NULL, rest_end = 3, reco
     ),
     yaxis = list(
       title = "Heart Rate (BPM)",
-      range = c(50, 205),
+      range = c(45, 215),
       gridcolor = "rgba(22, 52, 86, 0.4)",
       linecolor = "#163456"
     ),
@@ -251,32 +287,64 @@ plot_simulated_vs_real_hr <- function(sim_df, real_df = NULL, rest_end = 3, reco
   p
 }
 
-#' Plot Predicted Multi-Signal Simulation
-plot_predicted_signals_simulation <- function(sim_df) {
-  p <- plot_ly() %>%
-    add_lines(
-      x = sim_df$time_min, y = sim_df$heart_rate,
-      name = "Heart Rate (BPM)",
-      line = list(color = "#FF4B6E", width = 2),
-      yaxis = "y"
-    ) %>%
-    add_lines(
-      x = sim_df$time_min, y = sim_df$skin_temp,
-      name = "Skin Temp (°C)",
-      line = list(color = "#00D2FF", width = 1.8),
-      yaxis = "y2"
-    ) %>%
-    add_lines(
-      x = sim_df$time_min, y = sim_df$eda,
-      name = "EDA (µS)",
-      line = list(color = "#FFAA00", width = 1.8),
-      yaxis = "y3"
-    ) %>%
+#' Plot Predicted Multi-Signal Simulation with Progression Cursor
+plot_predicted_signals_simulation <- function(sim_df, total_dur = NULL) {
+  if (is.null(total_dur) || total_dur <= 0) {
+    total_dur <- if (!is.null(sim_df) && nrow(sim_df) > 0) max(sim_df$time_min, na.rm = TRUE) else 20
+    if (total_dur <= 0) total_dur <- 20
+  }
+  
+  p <- plot_ly()
+  
+  if (!is.null(sim_df) && nrow(sim_df) > 0) {
+    p <- p %>%
+      add_lines(
+        x = sim_df$time_min, y = sim_df$heart_rate,
+        name = "Heart Rate (BPM)",
+        line = list(color = "#FF4B6E", width = 2),
+        yaxis = "y"
+      ) %>%
+      add_lines(
+        x = sim_df$time_min, y = sim_df$skin_temp,
+        name = "Skin Temp (°C)",
+        line = list(color = "#00D2FF", width = 1.8),
+        yaxis = "y2"
+      ) %>%
+      add_lines(
+        x = sim_df$time_min, y = sim_df$eda,
+        name = "EDA (µS)",
+        line = list(color = "#FFAA00", width = 1.8),
+        yaxis = "y3"
+      )
+    
+    cur_time <- max(sim_df$time_min, na.rm = TRUE)
+  } else {
+    cur_time <- 0
+  }
+  
+  shapes_list <- list()
+  if (cur_time > 0 && cur_time < total_dur) {
+    shapes_list[[1]] <- list(
+      type = "line",
+      x0 = cur_time, x1 = cur_time,
+      y0 = 0, y1 = 1,
+      yref = "paper",
+      line = list(color = "rgba(255, 75, 110, 0.7)", width = 1.8, dash = "dot")
+    )
+  }
+  
+  p <- p %>%
     layout(
+      shapes = shapes_list,
       paper_bgcolor = "rgba(0,0,0,0)",
       plot_bgcolor = "rgba(0,0,0,0)",
       font = list(color = "#8EA3BF", family = "Inter, sans-serif", size = 11),
-      xaxis = list(title = "Time (minutes)", gridcolor = "rgba(22, 52, 86, 0.4)", linecolor = "#163456"),
+      xaxis = list(
+        title = "Time (minutes)",
+        range = c(0, total_dur),
+        gridcolor = "rgba(22, 52, 86, 0.4)",
+        linecolor = "#163456"
+      ),
       yaxis = list(
         title = "HR (BPM)", titlefont = list(color = "#FF4B6E"), tickfont = list(color = "#FF4B6E"),
         gridcolor = "rgba(22, 52, 86, 0.4)", side = "left"

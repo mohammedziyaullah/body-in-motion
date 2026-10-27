@@ -129,4 +129,48 @@ expect_gt(length(pb_dens$x$data), 0)
 expect_equal(pb_dens$x$data[[1]]$name, "Anaerobic Exercise")
 cat("  [PASS] Test 12: Heart Rate distribution reflects filtered Anaerobic Exercise condition\n")
 
-cat("\nALL 12 DATA EXPLORATION TESTS PASSED SUCCESSFULLY!\n")
+# Test 13: Selecting only BVP produces single trace with actual BVP values, solid line, on primary yaxis
+p_bvp_only <- plot_multi_signal_timeseries(chained_ana, signals = c("bvp"))
+pb_bvp_only <- plotly_build(p_bvp_only)
+expect_equal(length(pb_bvp_only$x$data), 1)
+tr_bvp <- pb_bvp_only$x$data[[1]]
+expect_equal(tr_bvp$name, "BVP Signal")
+expect_true(is.null(tr_bvp$line$dash) || tr_bvp$line$dash == "solid")
+expect_true(is.null(tr_bvp$yaxis) || tr_bvp$yaxis == "y")
+# Confirm actual values preserved (between 1.2 and 1.8), NOT normalized to [0, 1]
+expect_gt(min(tr_bvp$y, na.rm = TRUE), 1.0)
+expect_lt(max(tr_bvp$y, na.rm = TRUE), 2.0)
+cat("  [PASS] Test 13: BVP-only plot renders actual samples with solid line on primary axis\n")
+
+# Test 14: BVP-only plot labels primary Y-axis 'BVP Signal' and hides secondary axis
+y_title_text <- if (is.list(pb_bvp_only$x$layout$yaxis$title)) pb_bvp_only$x$layout$yaxis$title$text else pb_bvp_only$x$layout$yaxis$title
+expect_equal(y_title_text, "BVP Signal")
+expect_false(isTRUE(pb_bvp_only$x$layout$yaxis2$visible))
+cat("  [PASS] Test 14: BVP-only plot has Y-axis labeled 'BVP Signal' and hides secondary axis\n")
+
+# Test 15: Heart-rate-only plot labels primary Y-axis 'Heart Rate (BPM)'
+p_hr_only <- plot_multi_signal_timeseries(chained_ana, signals = c("heart_rate"))
+pb_hr_only <- plotly_build(p_hr_only)
+expect_equal(length(pb_hr_only$x$data), 1)
+y_hr_title <- if (is.list(pb_hr_only$x$layout$yaxis$title)) pb_hr_only$x$layout$yaxis$title$text else pb_hr_only$x$layout$yaxis$title
+expect_equal(y_hr_title, "Heart Rate (BPM)")
+cat("  [PASS] Test 15: Heart-rate-only plot has Y-axis labeled 'Heart Rate (BPM)'\n")
+
+# Test 16: Multi-signal plot with HR + BVP plots HR on primary axis and BVP on secondary axis with solid line
+p_multi_bvp <- plot_multi_signal_timeseries(chained_ana, signals = c("heart_rate", "bvp"))
+pb_multi_bvp <- plotly_build(p_multi_bvp)
+expect_equal(length(pb_multi_bvp$x$data), 2)
+bvp_tr <- if (pb_multi_bvp$x$data[[1]]$name == "BVP (Norm)") pb_multi_bvp$x$data[[1]] else pb_multi_bvp$x$data[[2]]
+expect_equal(bvp_tr$yaxis, "y2")
+expect_true(is.null(bvp_tr$line$dash) || bvp_tr$line$dash == "solid")
+cat("  [PASS] Test 16: Multi-signal with HR + BVP renders clean dual-axis with solid lines\n")
+
+# Test 17: Signal distribution density correctly renders BVP density across conditions
+p_bvp_dist <- plot_signal_distribution_density(chained_all, signal = "bvp")
+pb_bvp_dist <- plotly_build(p_bvp_dist)
+expect_gt(length(pb_bvp_dist$x$data), 0)
+x_bvp_dist <- if (is.list(pb_bvp_dist$x$layout$xaxis$title)) pb_bvp_dist$x$layout$xaxis$title$text else pb_bvp_dist$x$layout$xaxis$title
+expect_equal(x_bvp_dist, "BVP Signal")
+cat("  [PASS] Test 17: Signal distribution density accurately reflects BVP distribution\n")
+
+cat("\nALL 17 DATA EXPLORATION & BVP TESTS PASSED SUCCESSFULLY!\n")

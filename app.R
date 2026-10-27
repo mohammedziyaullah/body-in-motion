@@ -244,7 +244,7 @@ page_home_ui <- function() {
 # =========================================================================
 # PAGE 2: DATA EXPLORATION PAGE UI DEFINITION
 # =========================================================================
-page_data_ui <- function() {
+page_data_ui <- function(selected_signals = c("heart_rate", "skin_temp", "eda", "movement_g")) {
   tagList(
     div(class = "mb-4",
         h2(class = "bim-hero-subtitle", style = "font-size: 1.8rem; margin-bottom: 4px;", "Data Exploration"),
@@ -295,7 +295,7 @@ page_data_ui <- function() {
                                              "EDA" = "eda",
                                              "Movement" = "movement_g",
                                              "BVP" = "bvp"),
-                                 selected = c("heart_rate", "skin_temp", "eda", "movement_g"))
+                                 selected = selected_signals)
           ),
           
           # Reset Button
@@ -313,7 +313,8 @@ page_data_ui <- function() {
             type = "pills",
             tabPanel("Time Series",
                      div(style = "padding-top: 16px;",
-                         h5(class = "bim-card-title mb-2", "Physiological Signals Over Time"),
+                         uiOutput("ui_data_signal_alert"),
+                         uiOutput("ui_timeseries_card_title"),
                          plotlyOutput("plot_data_timeseries", height = "360px")
                      )
             ),
@@ -339,7 +340,7 @@ page_data_ui <- function() {
             class = "col-md-6 mb-4",
             div(
               class = "bim-card",
-              h5(class = "bim-card-title mb-2", "Heart Rate Distribution"),
+              uiOutput("ui_dist_card_title"),
               plotlyOutput("plot_data_hr_dist", height = "240px")
             )
           ),
@@ -398,10 +399,6 @@ page_sim_ui <- function() {
               sliderInput("sim_duration", NULL, min = 5, max = 45, value = 20, step = 1, post = " min", width = "100%")
           ),
           
-          # Run Simulation Button
-          actionButton("btn_run_sim", HTML('<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg> Run Simulation'), 
-                       class = "bim-btn-primary w-100 mb-3"),
-          
           # Simulation Model Selection
           div(class = "bim-form-group",
               tags$label(class = "bim-form-label", "Simulation Model"),
@@ -411,9 +408,50 @@ page_sim_ui <- function() {
                            selected = "Average")
           ),
           
+          # Playback & Animation Controls Card
+          div(
+            style = "background: rgba(8, 23, 40, 0.7); border: 1px solid #163456; border-radius: 8px; padding: 12px; margin-bottom: 16px;",
+            div(class = "d-flex justify-content-between align-items-center mb-2",
+                span(style = "font-size: 0.82rem; font-weight: 600; color: #00CFFF; text-transform: uppercase; letter-spacing: 0.5px;", "Animation Playback"),
+                uiOutput("ui_sim_status_badge")
+            ),
+            
+            # Simulated Time & Progress Display
+            div(class = "d-flex justify-content-between align-items-center mb-1",
+                span(class = "text-muted small", "Simulated Time"),
+                uiOutput("ui_sim_time_display")
+            ),
+            uiOutput("ui_sim_progress_bar"),
+            
+            # Animation Buttons (Run, Pause, Resume, Stop, Reset)
+            div(
+              class = "btn-group w-100 mt-3 mb-2", role = "group",
+              actionButton("btn_run_sim", HTML('<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg> Run'), 
+                           class = "btn btn-primary btn-sm px-2", style = "font-size: 0.74rem; font-weight: 600;", title = "Start Playback from Time 0"),
+              actionButton("btn_pause_sim", HTML('<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Pause'), 
+                           class = "btn btn-outline-warning btn-sm px-2", style = "font-size: 0.74rem; font-weight: 600;", title = "Pause Animation"),
+              actionButton("btn_resume_sim", HTML('<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg> Resume'), 
+                           class = "btn btn-outline-success btn-sm px-2", style = "font-size: 0.74rem; font-weight: 600;", title = "Resume Playback"),
+              actionButton("btn_stop_sim", HTML('<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5" width="14" height="14" rx="2"/></svg> Stop'), 
+                           class = "btn btn-outline-danger btn-sm px-2", style = "font-size: 0.74rem; font-weight: 600;", title = "Stop Playback"),
+              actionButton("btn_restart_sim", HTML('<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> Reset'), 
+                           class = "btn btn-outline-secondary btn-sm px-2", style = "font-size: 0.74rem; font-weight: 600;", title = "Reset to Time 0")
+            ),
+            
+            # Playback Speed Selector (1x, 2x, 5x)
+            div(
+              class = "d-flex justify-content-between align-items-center mt-2 pt-2",
+              style = "border-top: 1px solid rgba(22, 52, 86, 0.5);",
+              span(class = "text-muted small", "Playback Speed:"),
+              radioButtons("sim_speed", NULL,
+                           choices = c("1×" = "1", "2×" = "2", "5×" = "5"),
+                           selected = "1", inline = TRUE)
+            )
+          ),
+          
           # Reset Button
-          actionButton("btn_reset_sim", "Reset Parameters", class = "btn btn-outline-secondary w-100", 
-                       style = "border-color: #163456; color: #8EA3BF;")
+          actionButton("btn_reset_sim", "Reset All Parameters", class = "btn btn-outline-secondary w-100", 
+                       style = "border-color: #163456; color: #8EA3BF; font-size: 0.8rem;")
         )
       ),
       
@@ -430,6 +468,7 @@ page_sim_ui <- function() {
                              h5(class = "bim-card-title mb-0", "Simulated vs Real Heart Rate Response"),
                              span(class = "badge", style = "background: rgba(8, 123, 255, 0.2); color: #00CFFF; border: 1px solid rgba(0, 207, 255, 0.3);", "ranger Random Forest Regressor")
                          ),
+                         uiOutput("ui_sim_live_banner"),
                          plotlyOutput("plot_sim_hr_response", height = "300px"),
                          div(class = "mt-4",
                              h5(class = "bim-card-title mb-2", "Predicted Physiological Signals"),
@@ -798,7 +837,17 @@ page_participant_ui <- function() {
 # =========================================================================
 # MAIN APP UI (CONTAINING ALL 6 PAGES WITH INSTANT CLIENT-SIDE SWITCHING)
 # =========================================================================
-ui <- fluidPage(
+ui <- function(request) {
+  query <- if (!is.null(request$QUERY_STRING)) parseQueryString(request$QUERY_STRING) else list()
+  init_signals <- if (!is.null(query$signals)) {
+    sig_vec <- strsplit(query$signals, ",")[[1]]
+    valid <- intersect(sig_vec, c("heart_rate", "skin_temp", "eda", "movement_g", "bvp"))
+    if (length(valid) > 0) valid else c("heart_rate", "skin_temp", "eda", "movement_g")
+  } else {
+    c("heart_rate", "skin_temp", "eda", "movement_g")
+  }
+
+  fluidPage(
   title = "Body in Motion — Human Body Response Simulator",
   theme = bs_theme(
     bg = "#061321",
@@ -855,7 +904,7 @@ ui <- fluidPage(
   div(
     class = "bim-container",
     div(id = "page_home_wrap", class = "bim-page-wrap", page_home_ui()),
-    div(id = "page_data_wrap", class = "bim-page-wrap", style = "display: none;", page_data_ui()),
+    div(id = "page_data_wrap", class = "bim-page-wrap", style = "display: none;", page_data_ui(selected_signals = init_signals)),
     div(id = "page_sim_wrap", class = "bim-page-wrap", style = "display: none;", page_sim_ui()),
     div(id = "page_analytics_wrap", class = "bim-page-wrap", style = "display: none;", page_analytics_ui()),
     div(id = "page_about_wrap", class = "bim-page-wrap", style = "display: none;", page_about_ui()),
@@ -867,7 +916,8 @@ ui <- fluidPage(
     class = "bim-footer",
     HTML('Body in Motion — Advanced Physiological Intelligence Platform &bull; Production Telemetry Analytics &bull; Real PhysioNet Wearable Dataset &bull; ranger Random Forest Regression Engine')
   )
-)
+  )
+}
 
 # =========================================================================
 # SERVER LOGIC
@@ -904,6 +954,17 @@ server <- function(input, output, session) {
     if (!is.null(query$participant)) {
       updateSelectInput(session, "data_participant", selected = query$participant)
       updateSelectInput(session, "global_participant", selected = query$participant)
+    }
+    if (!is.null(query$signals)) {
+      sig_vec <- strsplit(query$signals, ",")[[1]]
+      valid_sigs <- intersect(sig_vec, c("heart_rate", "skin_temp", "eda", "movement_g", "bvp"))
+      if (length(valid_sigs) > 0) {
+        updateCheckboxGroupInput(session, "data_signals", selected = valid_sigs)
+      }
+    }
+    if (!is.null(query$sim) && query$sim == "run") {
+      sim_state$status <- if (!is.null(query$status)) query$status else "Running"
+      sim_state$step <- if (!is.null(query$step)) as.integer(query$step) else 18
     }
   })
 
@@ -999,6 +1060,80 @@ server <- function(input, output, session) {
     updateCheckboxGroupInput(session, "data_signals", selected = c("heart_rate", "skin_temp", "eda", "movement_g"))
   })
 
+  output$ui_data_signal_alert <- renderUI({
+    df <- filtered_exploration_data()
+    signals <- if (!is.null(input$data_signals) && length(input$data_signals) > 0) input$data_signals else c("heart_rate", "skin_temp", "eda", "movement_g")
+    sub_id  <- if (!is.null(input$data_participant)) input$data_participant else "f01"
+    act_name <- if (!is.null(input$data_activity)) input$data_activity else "All Conditions"
+    
+    missing_sigs <- c()
+    for (s in signals) {
+      if (!(s %in% colnames(df)) || all(is.na(df[[s]]))) {
+        missing_sigs <- c(missing_sigs, s)
+      }
+    }
+    
+    if (length(missing_sigs) > 0) {
+      sig_names <- sapply(missing_sigs, function(s) {
+        switch(s, "heart_rate" = "Heart Rate", "skin_temp" = "Skin Temperature",
+               "eda" = "EDA", "movement_g" = "Movement", "bvp" = "BVP", s)
+      })
+      
+      avail_sigs <- c()
+      for (s in c("heart_rate", "eda", "movement_g", "bvp", "skin_temp")) {
+        if (s %in% colnames(df) && any(!is.na(df[[s]]))) {
+          avail_sigs <- c(avail_sigs, switch(s, "heart_rate" = "Heart Rate", "skin_temp" = "Skin Temperature",
+                                             "eda" = "EDA", "movement_g" = "Movement", "bvp" = "BVP", s))
+        }
+      }
+      
+      div(
+        class = "alert mb-3 py-2 px-3",
+        style = "background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.4); color: #FCD34D; border-radius: 8px; font-size: 0.84rem; line-height: 1.5;",
+        HTML(paste0(
+          '<strong><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -2px; margin-right: 6px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Telemetry Availability:</strong> ',
+          '<strong>', paste(sig_names, collapse = " & "), '</strong> sensor was not recorded for participant <strong>', sub_id, '</strong> during <strong>', act_name, '</strong> in the Empatica E4 study. ',
+          if (length(avail_sigs) > 0) paste0('<br><span style="color: #6EE7B7;">&bull; Recorded signals for this session: <strong>', paste(avail_sigs, collapse = ", "), '</strong> (select checkboxes on left to view).</span> ') else '',
+          if ("skin_temp" %in% missing_sigs) '<br><span style="color: #93C5FD;">&bull; To explore Skin Temperature for this activity, select participant <strong>S01, S04, S05, S09,</strong> or <strong>S10</strong>.</span>' else ''
+        ))
+      )
+    }
+  })
+
+  output$ui_timeseries_card_title <- renderUI({
+    signals <- if (!is.null(input$data_signals) && length(input$data_signals) > 0) input$data_signals else c("heart_rate", "skin_temp", "eda", "movement_g")
+    title_text <- if (identical(signals, "bvp") || (length(signals) == 1 && signals[1] == "bvp")) {
+      "Blood Volume Pulse (BVP) vs Time"
+    } else if (identical(signals, "heart_rate") || (length(signals) == 1 && signals[1] == "heart_rate")) {
+      "Heart Rate (BPM) vs Time"
+    } else if (identical(signals, "skin_temp") || (length(signals) == 1 && signals[1] == "skin_temp")) {
+      "Skin Temperature vs Time"
+    } else if (identical(signals, "eda") || (length(signals) == 1 && signals[1] == "eda")) {
+      "Electrodermal Activity (EDA) vs Time"
+    } else if (identical(signals, "movement_g") || (length(signals) == 1 && signals[1] == "movement_g")) {
+      "Movement Acceleration vs Time"
+    } else {
+      "Physiological Signals Over Time"
+    }
+    h5(class = "bim-card-title mb-2", title_text)
+  })
+
+  output$ui_dist_card_title <- renderUI({
+    signals <- if (!is.null(input$data_signals) && length(input$data_signals) > 0) input$data_signals else c("heart_rate", "skin_temp", "eda", "movement_g")
+    title_text <- if (identical(signals, "bvp") || (length(signals) == 1 && signals[1] == "bvp")) {
+      "Blood Volume Pulse (BVP) Distribution across Conditions"
+    } else if (identical(signals, "skin_temp") || (length(signals) == 1 && signals[1] == "skin_temp")) {
+      "Skin Temperature Distribution across Conditions"
+    } else if (identical(signals, "eda") || (length(signals) == 1 && signals[1] == "eda")) {
+      "EDA Distribution across Conditions"
+    } else if (identical(signals, "movement_g") || (length(signals) == 1 && signals[1] == "movement_g")) {
+      "Movement Distribution across Conditions"
+    } else {
+      "Heart Rate Distribution across Conditions"
+    }
+    h5(class = "bim-card-title mb-2", title_text)
+  })
+
   output$plot_data_timeseries <- renderPlotly({
     df <- filtered_exploration_data()
     signals <- if (!is.null(input$data_signals) && length(input$data_signals) > 0) input$data_signals else c("heart_rate", "skin_temp", "eda", "movement_g")
@@ -1007,7 +1142,19 @@ server <- function(input, output, session) {
 
   output$plot_data_hr_dist <- renderPlotly({
     df <- filtered_exploration_data()
-    plot_hr_distribution_density(df)
+    signals <- if (!is.null(input$data_signals) && length(input$data_signals) > 0) input$data_signals else c("heart_rate", "skin_temp", "eda", "movement_g")
+    primary_sig <- if (identical(signals, "bvp") || (length(signals) == 1 && signals[1] == "bvp")) {
+      "bvp"
+    } else if (identical(signals, "skin_temp") || (length(signals) == 1 && signals[1] == "skin_temp")) {
+      "skin_temp"
+    } else if (identical(signals, "eda") || (length(signals) == 1 && signals[1] == "eda")) {
+      "eda"
+    } else if (identical(signals, "movement_g") || (length(signals) == 1 && signals[1] == "movement_g")) {
+      "movement_g"
+    } else {
+      "heart_rate"
+    }
+    plot_signal_distribution_density(df, signal = primary_sig)
   })
 
   output$plot_data_heatmap <- renderPlotly({
@@ -1020,46 +1167,83 @@ server <- function(input, output, session) {
     df <- filtered_exploration_data()
     if (nrow(df) == 0) return(data.frame(Message = "No data available for current selection"))
     
+    signals <- if (!is.null(input$data_signals) && length(input$data_signals) > 0) input$data_signals else c("heart_rate", "skin_temp", "eda", "movement_g")
+    
     calc_mean <- function(x) if (all(is.na(x))) NA else round(mean(x, na.rm = TRUE), 2)
     calc_max  <- function(x) if (all(is.na(x))) NA else round(max(x, na.rm = TRUE), 2)
     calc_min  <- function(x) if (all(is.na(x))) NA else round(min(x, na.rm = TRUE), 2)
     
-    data.frame(
-      `Metric` = c("Heart Rate (BPM)", "Skin Temperature (°C)", "EDA (µS)", "Movement (g)", "BVP"),
-      `Observations` = c(sum(!is.na(df$heart_rate)), sum(!is.na(df$skin_temp)), sum(!is.na(df$eda)), sum(!is.na(df$movement_g)), sum(!is.na(df$bvp))),
-      `Mean` = c(calc_mean(df$heart_rate), calc_mean(df$skin_temp), calc_mean(df$eda), calc_mean(df$movement_g), calc_mean(df$bvp)),
-      `Min`  = c(calc_min(df$heart_rate), calc_min(df$skin_temp), calc_min(df$eda), calc_min(df$movement_g), calc_min(df$bvp)),
-      `Max`  = c(calc_max(df$heart_rate), calc_max(df$skin_temp), calc_max(df$eda), calc_max(df$movement_g), calc_max(df$bvp)),
-      check.names = FALSE
-    )
+    metrics_list <- list()
+    if ("heart_rate" %in% signals) {
+      metrics_list[[length(metrics_list) + 1]] <- data.frame(
+        `Metric` = "Heart Rate (BPM)", `Observations` = sum(!is.na(df$heart_rate)),
+        `Mean` = calc_mean(df$heart_rate), `Min` = calc_min(df$heart_rate), `Max` = calc_max(df$heart_rate), check.names = FALSE
+      )
+    }
+    if ("skin_temp" %in% signals) {
+      metrics_list[[length(metrics_list) + 1]] <- data.frame(
+        `Metric` = "Skin Temperature (°C)", `Observations` = sum(!is.na(df$skin_temp)),
+        `Mean` = calc_mean(df$skin_temp), `Min` = calc_min(df$skin_temp), `Max` = calc_max(df$skin_temp), check.names = FALSE
+      )
+    }
+    if ("eda" %in% signals) {
+      metrics_list[[length(metrics_list) + 1]] <- data.frame(
+        `Metric` = "EDA (µS)", `Observations` = sum(!is.na(df$eda)),
+        `Mean` = calc_mean(df$eda), `Min` = calc_min(df$eda), `Max` = calc_max(df$eda), check.names = FALSE
+      )
+    }
+    if ("movement_g" %in% signals) {
+      metrics_list[[length(metrics_list) + 1]] <- data.frame(
+        `Metric` = "Movement (g)", `Observations` = sum(!is.na(df$movement_g)),
+        `Mean` = calc_mean(df$movement_g), `Min` = calc_min(df$movement_g), `Max` = calc_max(df$movement_g), check.names = FALSE
+      )
+    }
+    if ("bvp" %in% signals) {
+      metrics_list[[length(metrics_list) + 1]] <- data.frame(
+        `Metric` = "BVP Signal", `Observations` = sum(!is.na(df$bvp)),
+        `Mean` = calc_mean(df$bvp), `Min` = calc_min(df$bvp), `Max` = calc_max(df$bvp), check.names = FALSE
+      )
+    }
+    
+    if (length(metrics_list) == 0) return(data.frame(Message = "No signals selected"))
+    do.call(rbind, metrics_list)
   }, striped = TRUE, hover = TRUE, bordered = TRUE)
 
   output$dt_data_records <- renderDT({
     df <- filtered_exploration_data()
     if (nrow(df) == 0) return(datatable(data.frame(Message = "No records match the current filter selection"), options = list(dom = 't')))
     
+    signals <- if (!is.null(input$data_signals) && length(input$data_signals) > 0) input$data_signals else c("heart_rate", "skin_temp", "eda", "movement_g")
+    
     t_min <- if ("timeline_sec" %in% colnames(df)) round(df$timeline_sec / 60, 2) else round(df$elapsed_sec / 60, 2)
     
     res_df <- data.frame(
       `Time (min)` = t_min,
       `Condition` = df$activity_condition,
-      `HR (BPM)` = round(df$heart_rate, 1),
-      `Temp (°C)` = round(df$skin_temp, 2),
-      `EDA (µS)` = round(df$eda, 3),
-      `Move (g)` = round(df$movement_g, 3),
       check.names = FALSE
     )
-    
-    if (!is.null(input$data_signals) && "bvp" %in% input$data_signals) {
-      res_df$`BVP` <- round(df$bvp, 3)
-    }
+    if ("heart_rate" %in% signals) res_df$`HR (BPM)` <- round(df$heart_rate, 1)
+    if ("skin_temp" %in% signals)  res_df$`Temp (°C)` <- round(df$skin_temp, 2)
+    if ("eda" %in% signals)        res_df$`EDA (µS)`  <- round(df$eda, 3)
+    if ("movement_g" %in% signals) res_df$`Move (g)`  <- round(df$movement_g, 3)
+    if ("bvp" %in% signals)        res_df$`BVP Signal` <- round(df$bvp, 3)
     
     datatable(res_df, options = list(pageLength = 8, scrollX = TRUE, dom = 'tip'), rownames = FALSE)
   })
 
-  # --- PAGE 3: SCENARIO SIMULATION REACTIVES & PLOTS ---
-  sim_results_reactive <- reactiveVal()
+  # --- PAGE 3: SCENARIO SIMULATION REACTIVES & ANIMATED PLAYBACK ---
+  sim_state <- reactiveValues(
+    status = "Ready",       # "Ready", "Running", "Paused", "Completed"
+    step = 0,              # current visible step index (1 to total_steps)
+    total_steps = 0,
+    speed = 1,             # 1, 2, or 5
+    sim_data = NULL        # full simulation output from simulate_physiological_response
+  )
 
+  # Progressive simulation clock timer (fires every 240ms)
+  sim_clock <- reactiveTimer(240)
+
+  # Initial baseline generation on startup
   observe({
     res <- simulate_physiological_response(
       activity_type = "Aerobic Exercise",
@@ -1069,81 +1253,316 @@ server <- function(input, output, session) {
       rf_model = rf_model,
       baseline_data = sessions_data
     )
-    sim_results_reactive(res)
+    sim_state$sim_data    <- res
+    sim_state$total_steps <- nrow(res$simulated)
+    query <- parseQueryString(session$clientData$url_search)
+    if (!is.null(query$step)) {
+      sim_state$step   <- as.integer(query$step)
+      sim_state$status <- if (!is.null(query$status)) query$status else "Running"
+    } else {
+      sim_state$step   <- nrow(res$simulated)
+      sim_state$status <- "Ready"
+    }
   })
 
+  # Run Simulation Button: Start or Restart Playback
   observeEvent(input$btn_run_sim, {
-    sub_choice <- if (input$sim_model_choice == "Participant") input$global_participant else "Average"
+    sub_choice <- if (!is.null(input$sim_model_choice) && input$sim_model_choice == "Participant") {
+      input$global_participant
+    } else {
+      "Average"
+    }
+    
+    act  <- if (!is.null(input$sim_activity_type)) input$sim_activity_type else "Aerobic Exercise"
+    int  <- if (!is.null(input$sim_intensity)) input$sim_intensity else 60
+    dur  <- if (!is.null(input$sim_duration)) input$sim_duration else 20
+    spd  <- if (!is.null(input$sim_speed)) as.numeric(input$sim_speed) else 1
+    
     res <- simulate_physiological_response(
-      activity_type = input$sim_activity_type,
-      intensity_pct = input$sim_intensity,
-      duration_min = input$sim_duration,
+      activity_type = act,
+      intensity_pct = int,
+      duration_min = dur,
       participant_id = sub_choice,
       rf_model = rf_model,
       baseline_data = sessions_data
     )
-    sim_results_reactive(res)
+    
+    sim_state$sim_data    <- res
+    sim_state$total_steps <- nrow(res$simulated)
+    sim_state$step        <- 1
+    sim_state$speed       <- spd
+    sim_state$status      <- "Running"
   })
 
+  # Pause Button: Toggles Pause / Running, or freezes at current frame
+  observeEvent(input$btn_pause_sim, {
+    if (sim_state$status == "Running") {
+      sim_state$status <- "Paused"
+    } else if (sim_state$status == "Paused") {
+      sim_state$status <- "Running"
+    } else if (sim_state$status == "Completed") {
+      sim_state$step   <- 1
+      sim_state$status <- "Paused"
+    }
+  })
+
+  # Resume Button: Continues playback, or restarts from 0 if completed/ready
+  observeEvent(input$btn_resume_sim, {
+    if (sim_state$status == "Paused") {
+      if (sim_state$step >= sim_state$total_steps) {
+        sim_state$step <- 1
+      }
+      sim_state$status <- "Running"
+    } else if (sim_state$status == "Completed" || sim_state$status == "Ready") {
+      sim_state$step   <- 1
+      sim_state$status <- "Running"
+    }
+  })
+
+  # Stop Button: Halts animation immediately at current position
+  observeEvent(input$btn_stop_sim, {
+    sim_state$status <- "Paused"
+  })
+
+  # Reset Button: Halts animation and resets time to 00:00 (Ready state)
+  observeEvent(input$btn_restart_sim, {
+    sim_state$step   <- 1
+    sim_state$status <- "Ready"
+  })
+
+  # Playback Speed Selector
+  observeEvent(input$sim_speed, {
+    req(input$sim_speed)
+    sim_state$speed <- as.numeric(input$sim_speed)
+  })
+
+  # Reset All Parameters Button
   observeEvent(input$btn_reset_sim, {
     updateSelectInput(session, "sim_activity_type", selected = "Aerobic Exercise")
     updateSliderInput(session, "sim_intensity", value = 60)
     updateSliderInput(session, "sim_duration", value = 20)
     updateRadioButtons(session, "sim_model_choice", selected = "Average")
+    updateRadioButtons(session, "sim_speed", selected = "1")
+    sim_state$step   <- 1
+    sim_state$status <- "Ready"
+  })
+
+  # Pause animation if user navigates away from Simulation page
+  observeEvent(input$current_active_page, {
+    if (!is.null(input$current_active_page) && input$current_active_page != "sim") {
+      if (sim_state$status == "Running") {
+        sim_state$status <- "Paused"
+      }
+    }
+  })
+
+  # Timer Observer: Advances simulation steps progressively
+  observe({
+    sim_clock()
+    
+    if (isolate(sim_state$status) == "Running") {
+      cur_step  <- isolate(sim_state$step)
+      tot_steps <- isolate(sim_state$total_steps)
+      spd       <- isolate(sim_state$speed)
+      
+      inc <- switch(as.character(spd),
+        "1" = 1,
+        "2" = 2,
+        "5" = 4,
+        1
+      )
+      
+      next_step <- cur_step + inc
+      if (next_step >= tot_steps) {
+        sim_state$step   <- tot_steps
+        sim_state$status <- "Completed"
+      } else {
+        sim_state$step   <- next_step
+      }
+    }
+  })
+
+  # Status Badge Output
+  output$ui_sim_status_badge <- renderUI({
+    st <- sim_state$status
+    badge_style <- switch(st,
+      "Ready"     = "background: rgba(0, 207, 255, 0.15); color: #00CFFF; border: 1px solid rgba(0, 207, 255, 0.4);",
+      "Running"   = "background: rgba(16, 232, 148, 0.2); color: #10E894; border: 1px solid rgba(16, 232, 148, 0.4);",
+      "Paused"    = "background: rgba(245, 158, 11, 0.2); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.4);",
+      "Completed" = "background: rgba(168, 85, 247, 0.2); color: #C084FC; border: 1px solid rgba(168, 85, 247, 0.4);",
+      "background: rgba(0, 207, 255, 0.15); color: #00CFFF;"
+    )
+    span(class = "badge", style = paste0(badge_style, " font-size: 0.72rem; padding: 2px 7px; font-weight: 600;"), st)
+  })
+
+  # Time Display Output (MM:SS / MM:SS)
+  output$ui_sim_time_display <- renderUI({
+    res <- sim_state$sim_data
+    dur_min <- if (!is.null(res)) res$metrics$duration else (input$sim_duration %||% 20)
+    
+    cur_min <- 0
+    if (!is.null(res) && sim_state$step > 0 && nrow(res$simulated) > 0) {
+      idx <- min(sim_state$step, nrow(res$simulated))
+      cur_min <- res$simulated$time_min[idx]
+    }
+    
+    cur_str <- sprintf("%02d:%02d", floor(cur_min), round((cur_min %% 1) * 60))
+    tot_str <- sprintf("%02d:00", dur_min)
+    
+    span(style = "font-family: monospace; font-size: 0.82rem; font-weight: 600; color: #FFFFFF;",
+         paste(cur_str, "/", tot_str))
+  })
+
+  # Progress Bar Output
+  output$ui_sim_progress_bar <- renderUI({
+    tot <- max(1, sim_state$total_steps)
+    cur <- min(sim_state$step, tot)
+    pct <- round((cur / tot) * 100)
+    
+    bar_color <- switch(sim_state$status,
+      "Running"   = "background-color: #10E894;",
+      "Paused"    = "background-color: #F59E0B;",
+      "Completed" = "background-color: #A855F7;",
+      "background-color: #00CFFF;"
+    )
+    
+    div(
+      class = "progress", style = "height: 6px; background-color: rgba(22, 52, 86, 0.6); border-radius: 4px; overflow: hidden;",
+      div(class = "progress-bar progress-bar-striped",
+          role = "progressbar",
+          style = paste0("width: ", pct, "%; ", bar_color, " transition: width 0.15s ease;"),
+          `aria-valuenow` = pct, `aria-valuemin` = 0, `aria-valuemax` = 100)
+    )
+  })
+
+  # Live Playback Banner above Graph 1
+  output$ui_sim_live_banner <- renderUI({
+    res <- sim_state$sim_data
+    req(res)
+    
+    dur_min <- res$metrics$duration
+    cur_idx <- max(1, min(sim_state$step, nrow(res$simulated)))
+    cur_row <- res$simulated[cur_idx, ]
+    
+    cur_min <- cur_row$time_min
+    cur_hr  <- cur_row$heart_rate
+    zone    <- cur_row$zone
+    
+    time_str <- sprintf("%02d:%02d", floor(cur_min), round((cur_min %% 1) * 60))
+    tot_str  <- sprintf("%02d:00", dur_min)
+    
+    zone_badge_color <- switch(zone,
+      "Rest"      = "background: rgba(59, 130, 246, 0.2); color: #60A5FA; border: 1px solid rgba(59, 130, 246, 0.4);",
+      "Exercise"  = "background: rgba(239, 68, 68, 0.2); color: #F87171; border: 1px solid rgba(239, 68, 68, 0.4);",
+      "Recovery"  = "background: rgba(16, 232, 148, 0.2); color: #34D399; border: 1px solid rgba(16, 232, 148, 0.4);",
+      "background: rgba(0, 207, 255, 0.2); color: #00CFFF;"
+    )
+    
+    div(
+      class = "d-flex justify-content-between align-items-center mb-3 px-3 py-2",
+      style = "background: rgba(8, 23, 40, 0.6); border: 1px solid rgba(22, 52, 86, 0.6); border-radius: 8px;",
+      div(
+        span(class = "text-muted small", "Simulated Time: "),
+        span(style = "font-family: monospace; font-weight: 700; color: #FFFFFF;", paste(time_str, "/", tot_str)),
+        span(class = "ms-3 badge", style = zone_badge_color, paste(zone, "Phase"))
+      ),
+      div(
+        span(class = "text-muted small", "Predicted HR: "),
+        span(style = "font-weight: 700; color: #FF4B6E;", paste(cur_hr, "BPM")),
+        span(class = "ms-3 text-muted small", "Status: "),
+        span(style = "font-weight: 600; color: #00CFFF;", sim_state$status)
+      )
+    )
   })
 
   output$plot_sim_hr_response <- renderPlotly({
-    res <- sim_results_reactive()
+    res <- sim_state$sim_data
     req(res)
+    
     act_name <- if (!is.null(input$sim_activity_type)) input$sim_activity_type else "Aerobic Exercise"
     sub_name <- if (!is.null(input$global_participant)) input$global_participant else participant_choices[1]
+    real_df  <- sessions_data %>% filter(participant_id == sub_name, activity_condition == act_name)
     
-    real_df <- sessions_data %>% filter(participant_id == sub_name, activity_condition == act_name)
-    plot_simulated_vs_real_hr(res$simulated, real_df, res$metrics$rest_end, res$metrics$recov_start, res$metrics$duration)
+    cur_step <- max(1, min(sim_state$step, nrow(res$simulated)))
+    sim_sub  <- res$simulated[1:cur_step, , drop = FALSE]
+    
+    plot_simulated_vs_real_hr(sim_sub, real_df, res$metrics$rest_end, res$metrics$recov_start, res$metrics$duration)
   })
 
   output$plot_sim_signals <- renderPlotly({
-    res <- sim_results_reactive()
+    res <- sim_state$sim_data
     req(res)
-    plot_predicted_signals_simulation(res$simulated)
+    
+    cur_step <- max(1, min(sim_state$step, nrow(res$simulated)))
+    sim_sub  <- res$simulated[1:cur_step, , drop = FALSE]
+    
+    plot_predicted_signals_simulation(sim_sub, total_dur = res$metrics$duration)
   })
 
   output$plot_sim_compare_detail <- renderPlotly({
-    res <- sim_results_reactive()
+    res <- sim_state$sim_data
     req(res)
+    
     act_name <- if (!is.null(input$sim_activity_type)) input$sim_activity_type else "Aerobic Exercise"
     sub_name <- if (!is.null(input$global_participant)) input$global_participant else participant_choices[1]
+    real_df  <- sessions_data %>% filter(participant_id == sub_name, activity_condition == act_name)
     
-    real_df <- sessions_data %>% filter(participant_id == sub_name, activity_condition == act_name)
-    plot_simulated_vs_real_hr(res$simulated, real_df, res$metrics$rest_end, res$metrics$recov_start, res$metrics$duration)
+    cur_step <- max(1, min(sim_state$step, nrow(res$simulated)))
+    sim_sub  <- res$simulated[1:cur_step, , drop = FALSE]
+    
+    plot_simulated_vs_real_hr(sim_sub, real_df, res$metrics$rest_end, res$metrics$recov_start, res$metrics$duration)
   })
 
   output$ui_sim_outcome_cards <- renderUI({
-    res <- sim_results_reactive()
+    res <- sim_state$sim_data
     req(res)
-    m <- res$metrics
     
-    div(
-      class = "bim-outcome-grid",
-      div(
-        class = "bim-outcome-box",
-        div(class = "bim-outcome-icon", style = "background: rgba(255, 75, 110, 0.15); color: #FF4B6E;", HTML('<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>')),
-        div(div(class = "bim-stat-val", paste(m$peak_hr, "BPM")), div(class = "bim-stat-lbl", "Peak Heart Rate"))
+    cur_step <- max(1, min(sim_state$step, nrow(res$simulated)))
+    is_completed <- (sim_state$status == "Completed" || cur_step >= nrow(res$simulated))
+    
+    if (is_completed) {
+      m <- res$metrics
+      peak_hr   <- paste(m$peak_hr, "BPM")
+      avg_temp  <- paste(m$avg_temp, "°C")
+      peak_eda  <- paste(m$peak_eda, "µS")
+      total_mov <- paste(m$total_mov, "g·min")
+      card_note <- "Final Outcome Metrics"
+    } else {
+      sub_df <- res$simulated[1:cur_step, ]
+      peak_hr   <- paste(max(sub_df$heart_rate, na.rm = TRUE), "BPM")
+      avg_temp  <- paste(round(mean(sub_df$skin_temp, na.rm = TRUE), 1), "°C")
+      peak_eda  <- paste(max(sub_df$eda, na.rm = TRUE), "µS")
+      total_mov <- paste(round(sum(sub_df$movement_g, na.rm = TRUE) * (30 / 60), 1), "g·min")
+      card_note <- paste0("Live Progress (", sim_state$status, ")")
+    }
+    
+    tagList(
+      div(class = "d-flex justify-content-between align-items-center mt-3 mb-1 px-1",
+          span(class = "text-muted small", style = "font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;", card_note),
+          span(class = "text-muted small", if (is_completed) "✓ Simulation Complete" else "Advancing simulated time...")
       ),
       div(
-        class = "bim-outcome-box",
-        div(class = "bim-outcome-icon", style = "background: rgba(0, 207, 255, 0.15); color: #00CFFF;", HTML('<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>')),
-        div(div(class = "bim-stat-val", paste(m$avg_temp, "°C")), div(class = "bim-stat-lbl", "Avg Skin Temperature"))
-      ),
-      div(
-        class = "bim-outcome-box",
-        div(class = "bim-outcome-icon", style = "background: rgba(255, 170, 0, 0.15); color: #FFAA00;", HTML('<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>')),
-        div(div(class = "bim-stat-val", paste(m$peak_eda, "µS")), div(class = "bim-stat-lbl", "Peak EDA"))
-      ),
-      div(
-        class = "bim-outcome-box",
-        div(class = "bim-outcome-icon", style = "background: rgba(16, 232, 148, 0.15); color: #10E894;", HTML('<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>')),
-        div(div(class = "bim-stat-val", paste(m$total_mov, "g·min")), div(class = "bim-stat-lbl", "Total Movement"))
+        class = "bim-outcome-grid",
+        div(
+          class = "bim-outcome-box",
+          div(class = "bim-outcome-icon", style = "background: rgba(255, 75, 110, 0.15); color: #FF4B6E;", HTML('<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>')),
+          div(div(class = "bim-stat-val", peak_hr), div(class = "bim-stat-lbl", "Peak Heart Rate"))
+        ),
+        div(
+          class = "bim-outcome-box",
+          div(class = "bim-outcome-icon", style = "background: rgba(0, 207, 255, 0.15); color: #00CFFF;", HTML('<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>')),
+          div(div(class = "bim-stat-val", avg_temp), div(class = "bim-stat-lbl", "Avg Skin Temperature"))
+        ),
+        div(
+          class = "bim-outcome-box",
+          div(class = "bim-outcome-icon", style = "background: rgba(255, 170, 0, 0.15); color: #FFAA00;", HTML('<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>')),
+          div(div(class = "bim-stat-val", peak_eda), div(class = "bim-stat-lbl", "Peak EDA"))
+        ),
+        div(
+          class = "bim-outcome-box",
+          div(class = "bim-outcome-icon", style = "background: rgba(16, 232, 148, 0.15); color: #10E894;", HTML('<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>')),
+          div(div(class = "bim-stat-val", total_mov), div(class = "bim-stat-lbl", "Total Movement"))
+        )
       )
     )
   })
